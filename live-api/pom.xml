@@ -43,11 +43,13 @@
             <version>${springboot.version}</version>
         </dependency>
 
+
         <!-- 下面是自定义组件 -->
         <dependency>
             <groupId>com.logilong</groupId>
             <artifactId>live-user-interface</artifactId>
             <version>${project.version}</version>
         </dependency>
+
     </dependencies>
 </project>

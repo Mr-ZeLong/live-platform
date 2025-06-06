@@ -1,30 +1,27 @@
-package com.logilong.live.user.provider.service.impl;
+package com.logilong.live.user.provider.rpc;
 
+import com.logilong.interfaces.IUserRpc;
 import com.logilong.live.common.interfaces.dto.UserDTO;
-import com.logilong.live.common.interfaces.utils.ConvertBeanUtils;
-import com.logilong.live.user.provider.dao.mapper.IUserMapper;
 import com.logilong.live.user.provider.service.IUserService;
 import jakarta.annotation.Resource;
-import org.springframework.stereotype.Service;
+import org.apache.dubbo.config.annotation.DubboService;
 
 import java.util.List;
 import java.util.Map;
 
-@Service
-public class UserServiceImpl implements IUserService {
+@DubboService(timeout=5000)
+public class UserRpcImpl implements IUserRpc {
 
     @Resource
-    private IUserMapper userMapper;
+    private IUserService userService;
 
     @Override
     public UserDTO getUserById(Long userId) {
-        if(userId == null) return null;
-        return ConvertBeanUtils.convert(userMapper.selectById(userId), UserDTO.class);
+        return userService.getUserById(userId);
     }
 
     @Override
     public boolean updateUserInfo(UserDTO userDTO) {
-
         return false;
     }
 

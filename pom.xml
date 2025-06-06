@@ -12,6 +12,7 @@
     <module>live-user-provider</module>
     <module>live-user-interface</module>
       <module>live-api</module>
+      <module>live-common-interface</module>
   </modules>
 
   <properties>
@@ -23,7 +24,7 @@
     <sharding.jdbc.version>5.3.2</sharding.jdbc.version>
     <hessian.version>4.0.38</hessian.version>
     <jetty.version>9.4.28.v20200408</jetty.version>
-    <dubbo.version>3.2.0</dubbo.version>
+    <dubbo.version>3.3.2</dubbo.version>
     <spring-cloud-alibaba.version>2022.0.0.0-RC1</spring-cloud-alibaba.version>
     <spring-cloud-starter-gateway.version>4.0.6</spring-cloud-starter-gateway.version>
     <spring-cloud-starter-loadbalancer.version>4.0.3</spring-cloud-starter-loadbalancer.version>
@@ -49,4 +50,6 @@
       </dependency>
     </dependencies>
   </dependencyManagement>
+
+
 </project>

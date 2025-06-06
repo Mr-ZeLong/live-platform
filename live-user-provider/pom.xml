@@ -19,11 +19,22 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <arthus.zip.address>~/Download/</arthus.zip.address>
     </properties>
+
     <dependencies>
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter</artifactId>
             <version>${springboot.version}</version>
+<!--            <exclusions>-->
+<!--                <exclusion>-->
+<!--                    <groupId>org.slf4j</groupId>-->
+<!--                    <artifactId>jul-to-slf4j</artifactId>-->
+<!--                </exclusion>-->
+<!--                <exclusion>-->
+<!--                    <groupId>org.apache.logging.log4j</groupId>-->
+<!--                    <artifactId>log4j-to-slf4j</artifactId>-->
+<!--                </exclusion>-->
+<!--            </exclusions>-->
         </dependency>
         <dependency>
             <groupId>org.apache.dubbo</groupId>
@@ -51,12 +62,36 @@
             <groupId>org.apache.shardingsphere</groupId>
             <artifactId>shardingsphere-jdbc-core</artifactId>
             <version>${sharding.jdbc.version}</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.slf4j</groupId>
+                    <artifactId>jul-to-slf4j</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>log4j</groupId>
+                    <artifactId>log4j</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>ch.qos.logback</groupId>
+                    <artifactId>logback-classic</artifactId>factId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.slf4j</groupId>
+                    <artifactId>slf4j-api</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
 
         <dependency>
             <groupId>com.baomidou</groupId>
             <artifactId>mybatis-plus-boot-starter</artifactId>
             <version>${mybatis-plus.version}</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.slf4j</groupId>
+                    <artifactId>slf4j-api</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
 
         <dependency>
@@ -70,6 +105,11 @@
         <dependency>
             <groupId>com.logilong</groupId>
             <artifactId>live-user-interface</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.logilong</groupId>
+            <artifactId>live-common-interface</artifactId>
             <version>${project.version}</version>
         </dependency>
     </dependencies>
