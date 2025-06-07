@@ -112,5 +112,10 @@
             <artifactId>live-common-interface</artifactId>
             <version>${project.version}</version>
         </dependency>
+        <dependency>
+            <groupId>com.logilong</groupId>
+            <artifactId>live-framework-datasource-starter</artifactId>
+            <version>${project.version}</version>
+        </dependency>
     </dependencies>
 </project>
