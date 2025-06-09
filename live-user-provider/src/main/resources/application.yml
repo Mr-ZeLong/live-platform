@@ -10,6 +10,14 @@ spring:
       connection-init-sql: SELECT 1
       connection-timeout: 4000
       max-lifetime: 60000
+  data:
+    redis:
+      lettuce:
+        pool:
+          min-idle: 10
+          max-idle: 20
+          max-active: 50
+
 
 dubbo:
   application:
@@ -17,5 +25,5 @@ dubbo:
   registry:
     address: nacos://live-server:8848?namespace=live-test&&username=nacos&&password=nacos
   protocol:
-    name: duboo
+    name: dubbo
     port: 9091

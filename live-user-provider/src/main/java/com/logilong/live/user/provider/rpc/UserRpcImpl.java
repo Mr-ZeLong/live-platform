@@ -22,16 +22,16 @@ public class UserRpcImpl implements IUserRpc {
 
     @Override
     public boolean updateUserInfo(UserDTO userDTO) {
-        return false;
+        return userService.updateUserInfo(userDTO);
     }
 
     @Override
     public boolean insertOne(UserDTO userDTO) {
-        return false;
+        return userService.insertOne(userDTO);
     }
 
     @Override
     public Map<Long, UserDTO> batchQueryUserInfo(List<Long> userIdList) {
-        return Map.of();
+        return userService.batchQueryUserInfo(userIdList);
     }
 }
