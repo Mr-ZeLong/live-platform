@@ -7,17 +7,12 @@
         <version>1.0</version>
     </parent>
 
-    <artifactId>live-user-provider</artifactId>
+    <artifactId>live-id-generate-provider</artifactId>
     <packaging>jar</packaging>
-
-    <name>live-user-provider</name>
+    <name>live-id-generate-provider</name>
 
     <properties>
-        <maven.compiler.source>17</maven.compiler.source>
-        <maven.compiler.target>17</maven.compiler.target>
-        <maven.compiler.compilerVersion>17</maven.compiler.compilerVersion>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <arthus.zip.address>~/Download/</arthus.zip.address>
     </properties>
 
     <dependencies>
@@ -49,30 +44,6 @@
         </dependency>
 
         <dependency>
-            <groupId>org.apache.shardingsphere</groupId>
-            <artifactId>shardingsphere-jdbc-core</artifactId>
-            <version>${sharding.jdbc.version}</version>
-            <exclusions>
-                <exclusion>
-                    <groupId>org.slf4j</groupId>
-                    <artifactId>jul-to-slf4j</artifactId>
-                </exclusion>
-                <exclusion>
-                    <groupId>log4j</groupId>
-                    <artifactId>log4j</artifactId>
-                </exclusion>
-                <exclusion>
-                    <groupId>ch.qos.logback</groupId>
-                    <artifactId>logback-classic</artifactId>factId>
-                </exclusion>
-                <exclusion>
-                    <groupId>org.slf4j</groupId>
-                    <artifactId>slf4j-api</artifactId>
-                </exclusion>
-            </exclusions>
-        </dependency>
-
-        <dependency>
             <groupId>com.baomidou</groupId>
             <artifactId>mybatis-plus-boot-starter</artifactId>
             <version>${mybatis-plus.version}</version>
@@ -87,20 +58,14 @@
         <dependency>
             <groupId>org.projectlombok</groupId>
             <artifactId>lombok</artifactId>
-            <version>${lombook.version}</version> <!-- 使用最新版本 -->
+            <version>${lombook.version}</version>
             <scope>provided</scope>
-        </dependency>
-
-        <dependency>
-            <groupId>org.apache.rocketmq</groupId>
-            <artifactId>rocketmq-client</artifactId>
-            <version>${rocketmq.version}</version>
         </dependency>
 
         <!-- 下面是自定义组件 -->
         <dependency>
             <groupId>com.logilong</groupId>
-            <artifactId>live-user-interface</artifactId>
+            <artifactId>live-id-generate-interface</artifactId>
             <version>${project.version}</version>
         </dependency>
         <dependency>
@@ -108,15 +73,6 @@
             <artifactId>live-common-interface</artifactId>
             <version>${project.version}</version>
         </dependency>
-        <dependency>
-            <groupId>com.logilong</groupId>
-            <artifactId>live-framework-datasource-starter</artifactId>
-            <version>${project.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>com.logilong</groupId>
-            <artifactId>live-framework-redis-starter</artifactId>
-            <version>${project.version}</version>
-        </dependency>
     </dependencies>
+
 </project>

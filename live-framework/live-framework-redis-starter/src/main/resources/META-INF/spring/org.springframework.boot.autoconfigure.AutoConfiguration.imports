@@ -1,0 +1,2 @@
+com.logilong.live.framework.redis.starter.config.RedisConfig
+com.logilong.live.framework.redis.starter.key.UserProviderCacheKeyBuilder

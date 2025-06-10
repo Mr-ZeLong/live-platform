@@ -12,12 +12,13 @@ spring:
       max-lifetime: 60000
   data:
     redis:
+      port: 6379
+      host: live-server
       lettuce:
         pool:
           min-idle: 10
           max-idle: 20
           max-active: 50
-
 
 dubbo:
   application:
