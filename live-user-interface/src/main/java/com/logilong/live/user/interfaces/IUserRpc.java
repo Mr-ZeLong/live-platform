@@ -1,4 +1,4 @@
-package com.logilong.interfaces;
+package com.logilong.live.user.interfaces;
 
 
 import com.logilong.live.common.interfaces.dto.UserDTO;

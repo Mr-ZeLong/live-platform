@@ -1,6 +1,6 @@
 package com.logilong.live.api.controller;
 
-import com.logilong.interfaces.IUserRpc;
+import com.logilong.live.user.interfaces.IUserRpc;
 import com.logilong.live.common.interfaces.dto.UserDTO;
 import org.apache.dubbo.config.annotation.DubboReference;
 import org.springframework.web.bind.annotation.*;

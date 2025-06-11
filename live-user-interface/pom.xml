@@ -30,6 +30,12 @@
             <version>1.0</version>
             <scope>compile</scope>
         </dependency>
+        <dependency>
+            <groupId>org.projectlombok</groupId>
+            <artifactId>lombok</artifactId>
+            <version>${lombook.version}</version> <!-- 使用最新版本 -->
+            <scope>provided</scope>
+        </dependency>
     </dependencies>
 
 </project>

@@ -1,0 +1,3 @@
+com.logilong.live.framework.mq.starter.properties.RocketMQConsumerProperties
+com.logilong.live.framework.mq.starter.properties.RocketMQProducerProperties
+com.logilong.live.framework.mq.starter.producer.RocketMQProducerConfig

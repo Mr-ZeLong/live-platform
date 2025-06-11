@@ -1,6 +1,6 @@
 package com.logilong.live.user.provider.rpc;
 
-import com.logilong.interfaces.IUserRpc;
+import com.logilong.live.user.interfaces.IUserRpc;
 import com.logilong.live.common.interfaces.dto.UserDTO;
 import com.logilong.live.user.provider.service.IUserService;
 import jakarta.annotation.Resource;
