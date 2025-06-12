@@ -38,6 +38,6 @@ dubbo:
     address: nacos://live-server:8848?namespace=live-test&&username=nacos&&password=nacos
   protocol:
     name: dubbo
-    port: 9091
+    port: 9090
 
 
