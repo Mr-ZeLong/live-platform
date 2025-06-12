@@ -1,4 +1,4 @@
-package com.logilong.live.common.interfaces.dto;
+package com.logilong.live.user.dto;
 
 import lombok.Data;
 
@@ -8,8 +8,10 @@ import java.util.Date;
 
 @Data
 public class UserDTO implements Serializable {
+
     @Serial
-    private static final long serialVersionUID = 4079363053345460398L;
+    private static final long serialVersionUID = 9144025905355048277L;
+
     private Long userId;
     private String nickName;
     private String trueName;

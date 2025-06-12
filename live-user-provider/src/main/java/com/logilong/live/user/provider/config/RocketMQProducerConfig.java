@@ -1,10 +1,11 @@
-package com.logilong.live.framework.mq.starter.producer;
+package com.logilong.live.user.provider.config;
 
 import jakarta.annotation.Resource;
 import org.apache.rocketmq.client.exception.MQClientException;
 import org.apache.rocketmq.client.producer.DefaultMQProducer;
 import org.apache.rocketmq.client.producer.MQProducer;
-import com.logilong.live.framework.mq.starter.properties.RocketMQProducerProperties;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -14,15 +15,16 @@ import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
-
 @Configuration
 public class RocketMQProducerConfig {
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(RocketMQProducerConfig.class);
 
     @Resource
     private RocketMQProducerProperties rocketMQProducerProperties;
 
     @Bean
-    public MQProducer mqProducer() {
+    public MQProducer mqProducer(){
         ThreadPoolExecutor asyncThreadPool = new ThreadPoolExecutor(Runtime.getRuntime().availableProcessors() * 2, 100, 30, TimeUnit.SECONDS, new ArrayBlockingQueue<>(2000), new ThreadFactory() {
             @Override
             public Thread newThread(Runnable r) {
@@ -38,7 +40,7 @@ public class RocketMQProducerConfig {
         defaultMQProducer.setAsyncSenderExecutor(asyncThreadPool);
         try {
             defaultMQProducer.start();
-            System.out.println("=============== mq生产者启动成功,namesrv is " + rocketMQProducerProperties.getNameSrv() + " ==================");
+            LOGGER.info("mq生产者启动成功,namesrv is {}", rocketMQProducerProperties.getNameSrv());
         } catch (MQClientException e) {
             throw new RuntimeException(e);
         }

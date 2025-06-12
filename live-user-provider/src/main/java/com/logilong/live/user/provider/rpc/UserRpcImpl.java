@@ -1,23 +1,28 @@
 package com.logilong.live.user.provider.rpc;
 
-import com.logilong.live.user.interfaces.IUserRpc;
-import com.logilong.live.common.interfaces.dto.UserDTO;
-import com.logilong.live.user.provider.service.IUserService;
 import jakarta.annotation.Resource;
 import org.apache.dubbo.config.annotation.DubboService;
+import com.logilong.live.user.dto.UserDTO;
+import com.logilong.live.user.interfaces.IUserRpc;
+import com.logilong.live.user.provider.service.IUserService;
 
 import java.util.List;
 import java.util.Map;
 
-@DubboService(timeout=5000)
+/**
+ * @Author idea
+ * @Date: Created in 15:42 2023/4/16
+ * @Description
+ */
+@DubboService
 public class UserRpcImpl implements IUserRpc {
 
     @Resource
     private IUserService userService;
 
     @Override
-    public UserDTO getUserById(Long userId) {
-        return userService.getUserById(userId);
+    public UserDTO getByUserId(Long userId) {
+        return userService.getByUserId(userId);
     }
 
     @Override

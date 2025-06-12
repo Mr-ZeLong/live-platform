@@ -1,28 +1,32 @@
 package com.logilong.live.user.interfaces;
 
-
-import com.logilong.live.common.interfaces.dto.UserDTO;
+import com.logilong.live.user.dto.UserDTO;
 
 import java.util.List;
 import java.util.Map;
 
 public interface IUserRpc {
+
     /**
      * 根据用户id进行查询
+     *
      * @param userId
      * @return
      */
-    UserDTO getUserById(Long userId);
+    UserDTO getByUserId(Long userId);
+
 
     /**
-     * 更新用户信息
+     * 用户信息更新
+     *
      * @param userDTO
      * @return
      */
     boolean updateUserInfo(UserDTO userDTO);
 
     /**
-     * 插入用户
+     * 插入用户信息
+     *
      * @param userDTO
      * @return
      */
@@ -30,8 +34,9 @@ public interface IUserRpc {
 
     /**
      * 批量查询用户信息
+     *
      * @param userIdList
      * @return
      */
-    Map<Long, UserDTO> batchQueryUserInfo(List<Long> userIdList);
+    Map<Long,UserDTO> batchQueryUserInfo(List<Long> userIdList);
 }

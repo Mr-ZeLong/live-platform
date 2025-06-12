@@ -1,7 +1,7 @@
 package com.logilong.live.api.controller;
 
 import com.logilong.live.user.interfaces.IUserRpc;
-import com.logilong.live.common.interfaces.dto.UserDTO;
+import com.logilong.live.user.dto.UserDTO;
 import org.apache.dubbo.config.annotation.DubboReference;
 import org.springframework.web.bind.annotation.*;
 
@@ -17,7 +17,7 @@ public class UserController {
 
     @GetMapping("/getUserInfo")
     public UserDTO getUserInfo(Long userId) {
-        return userRpc.getUserById(userId);
+        return userRpc.getByUserId(userId);
     }
 
     @GetMapping("/updateUserInfo")
