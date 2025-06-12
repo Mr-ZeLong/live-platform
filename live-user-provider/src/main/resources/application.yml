@@ -20,6 +20,17 @@ spring:
           max-idle: 20
           max-active: 50
 
+rmq:
+  producer:
+    nameSrv: live-server:9876
+    groupName: ${spring.application.name}
+    retryTimes: 3
+    sendTimeOut: 3000
+  consumer:
+    nameSrv: live-server:9876
+    groupName: ${spring.application.name}
+
+
 dubbo:
   application:
     name: live-user-provider
@@ -28,3 +39,5 @@ dubbo:
   protocol:
     name: dubbo
     port: 9091
+
+

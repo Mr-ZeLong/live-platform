@@ -47,6 +47,7 @@
     <alibaba-fastjson.version>2.0.10</alibaba-fastjson.version>
     <netty-all.version>4.1.18.Final</netty-all.version>
     <lombook.version>1.18.30</lombook.version>
+    <slf4j.version>2.0.6</slf4j.version>
     <maven.compiler.source>17</maven.compiler.source>
     <maven.compiler.target>17</maven.compiler.target>
     <maven.compiler.compilerVersion>17</maven.compiler.compilerVersion>
