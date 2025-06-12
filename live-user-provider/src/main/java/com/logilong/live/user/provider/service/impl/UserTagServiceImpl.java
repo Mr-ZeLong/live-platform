@@ -16,7 +16,7 @@ import com.logilong.live.user.provider.dao.mapper.IUserTagMapper;
 import com.logilong.live.user.provider.dao.po.UserTagPO;
 import com.logilong.live.user.provider.service.IUserTagService;
 import com.logilong.live.user.utils.TagInfoUtils;
-import org.springframework.boot.CommandLineRunner;
+
 import org.springframework.dao.DataAccessException;
 import org.springframework.data.redis.connection.RedisConnection;
 import org.springframework.data.redis.core.RedisCallback;
