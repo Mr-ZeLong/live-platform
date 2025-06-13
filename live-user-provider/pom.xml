@@ -17,7 +17,6 @@
         <maven.compiler.target>17</maven.compiler.target>
         <maven.compiler.compilerVersion>17</maven.compiler.compilerVersion>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <arthus.zip.address>~/Download/</arthus.zip.address>
     </properties>
 
     <dependencies>
@@ -67,7 +66,7 @@
                 </exclusion>
                 <exclusion>
                     <groupId>ch.qos.logback</groupId>
-                    <artifactId>logback-classic</artifactId>factId>
+                    <artifactId>logback-classic</artifactId>
                 </exclusion>
                 <exclusion>
                     <groupId>org.slf4j</groupId>
@@ -126,45 +125,6 @@
     <build>
         <finalName>live-user-provider-docker</finalName>
         <plugins>
-            <plugin>
-                <groupId>com.spotify</groupId>
-                <artifactId>docker-maven-plugin</artifactId>
-                <version>1.2.0</version>
-                <executions>
-                    <!-- 当mvn执行install操作的时候，执行docker的build -->
-                    <execution>
-                        <id>build</id>
-                        <phase>install</phase>
-                        <goals>
-                            <goal>build</goal>
-                            <goal>push</goal>
-                        </goals>
-                    </execution>
-                </executions>
-                <configuration>
-                    <imageTags>
-                        <imageTag>${project.version}</imageTag>
-                    </imageTags>
-                    <imageName>${docker.registry.address}/${docker.registry.namespace}/${project.build.finalName}</imageName>
-                    <!--指定Dockerfile文件的位置-->
-                    <dockerDirectory>${project.basedir}/docker</dockerDirectory>
-                    <resources>
-                        <!-- 指定jar包路径，这里对应Dockerfile中复制 jar 包到 docker 容器指定目录配置，也可以写到 Docokerfile 中 -->
-                        <resource>
-                            <targetPath>/</targetPath>
-                            <!-- 将下边目录的内容，拷贝到docker镜像中 -->
-                            <directory>${project.build.directory}</directory>
-                            <include>${project.build.finalName}.jar</include>
-                        </resource>
-                        <resource>
-                            <targetPath>/</targetPath>
-                            <directory>${arthus.zip.address}</directory>
-                            <include>arthas-bin.zip</include>
-                        </resource>
-                    </resources>
-                </configuration>
-            </plugin>
-
             <!-- 将SpringBoot应用打包成jar-->
             <plugin>
                 <groupId>org.springframework.boot</groupId>

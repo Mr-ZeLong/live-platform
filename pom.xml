@@ -14,17 +14,15 @@
   <version>1.0</version>
   <packaging>pom</packaging>
 
-  <name>live-platform</name>
   <modules>
-    <module>live-user-provider</module>
     <module>live-user-interface</module>
-      <module>live-api</module>
-      <module>live-common-interface</module>
-      <module>live-framework</module>
-      <module>live-framework/live-framework-redis-starter</module>
-      <module>live-framework/live-framework-datasource-starter</module>
+    <module>live-user-provider</module>
+    <module>live-api</module>
+    <module>live-common-interface</module>
+    <module>live-framework</module>
     <module>live-id-generate-interface</module>
     <module>live-id-generate-provider</module>
+      <module>live-gateway</module>
   </modules>
 
   <properties>

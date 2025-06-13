@@ -6,10 +6,8 @@
         <artifactId>liveplatform</artifactId>
         <version>1.0</version>
     </parent>
+    <artifactId>live-gateway</artifactId>
 
-    <artifactId>live-api</artifactId>
-    <packaging>jar</packaging>
-    <name>live-api</name>
 
     <properties>
         <maven.compiler.source>17</maven.compiler.source>
@@ -18,8 +16,13 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>
 
-
     <dependencies>
+        <!--gateway 内部引入了webflux-->
+        <dependency>
+            <groupId>org.springframework.cloud</groupId>
+            <artifactId>spring-cloud-starter-gateway</artifactId>
+            <version>${spring-cloud-starter-gateway.version}</version>
+        </dependency>
         <dependency>
             <groupId>org.apache.dubbo</groupId>
             <artifactId>dubbo-spring-boot-starter</artifactId>
@@ -27,14 +30,8 @@
         </dependency>
         <dependency>
             <groupId>org.springframework.cloud</groupId>
-            <artifactId>spring-cloud-starter-bootstrap</artifactId>
-            <version>${spring-cloud-starter-bootstrap.version}</version>
-        </dependency>
-
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-web</artifactId>
-            <version>${springboot.version}</version>
+            <artifactId>spring-cloud-starter-loadbalancer</artifactId>
+            <version>${spring-cloud-starter-loadbalancer.version}</version>
         </dependency>
         <dependency>
             <groupId>com.alibaba.cloud</groupId>
@@ -44,17 +41,25 @@
             <groupId>com.alibaba.cloud</groupId>
             <artifactId>spring-cloud-starter-alibaba-nacos-config</artifactId>
         </dependency>
-
-        <!-- 下面是自定义组件 -->
+        <dependency>
+            <groupId>org.springframework.cloud</groupId>
+            <artifactId>spring-cloud-starter-bootstrap</artifactId>
+            <version>${spring-cloud-starter-bootstrap.version}</version>
+        </dependency>
         <dependency>
             <groupId>com.logilong</groupId>
-            <artifactId>live-user-interface</artifactId>
-            <version>${project.version}</version>
+            <artifactId>live-common-interface</artifactId>
+            <version>1.0</version>
         </dependency>
+<!--        <dependency>-->
+<!--            <groupId>com.logilong</groupId>-->
+<!--            <artifactId>live-account-interface</artifactId>-->
+<!--            <version>1.0</version>-->
+<!--        </dependency>-->
     </dependencies>
 
     <build>
-        <finalName>live-api-docker</finalName>
+        <finalName>live-gateway-docker</finalName>
         <plugins>
             <!-- 将SpringBoot应用打包成jar-->
             <plugin>
@@ -63,4 +68,5 @@
             </plugin>
         </plugins>
     </build>
+
 </project>
