@@ -1,9 +1,9 @@
 package com.logilong.live.account.provider.rpc;
 
-import jakarta.annotation.Resource;
-import org.apache.dubbo.config.annotation.DubboService;
 import com.logilong.live.account.interfaces.IAccountTokenRPC;
 import com.logilong.live.account.provider.service.IAccountTokenService;
+import jakarta.annotation.Resource;
+import org.apache.dubbo.config.annotation.DubboService;
 
 @DubboService
 public class AccountTokenRPCImpl implements IAccountTokenRPC {
