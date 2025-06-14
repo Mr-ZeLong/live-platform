@@ -23,6 +23,8 @@
     <module>live-id-generate-interface</module>
     <module>live-id-generate-provider</module>
       <module>live-gateway</module>
+    <module>live-account-interface</module>
+    <module>live-account-provider</module>
   </modules>
 
   <properties>
