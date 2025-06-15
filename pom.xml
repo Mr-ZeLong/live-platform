@@ -25,6 +25,7 @@
       <module>live-gateway</module>
     <module>live-account-interface</module>
     <module>live-account-provider</module>
+      <module>live-msg-interface</module>
   </modules>
 
   <properties>
