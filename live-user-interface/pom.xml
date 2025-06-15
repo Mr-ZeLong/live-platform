@@ -8,27 +8,17 @@
     </parent>
 
     <artifactId>live-user-interface</artifactId>
-    <packaging>jar</packaging>
-
-    <name>live-user-interface</name>
 
     <properties>
         <maven.compiler.source>17</maven.compiler.source>
         <maven.compiler.target>17</maven.compiler.target>
-        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>
+
     <dependencies>
         <dependency>
             <groupId>com.logilong</groupId>
             <artifactId>live-common-interface</artifactId>
-            <version>1.0</version>
-            <scope>compile</scope>
-        </dependency>
-        <dependency>
-            <groupId>com.logilong</groupId>
-            <artifactId>live-common-interface</artifactId>
-            <version>1.0</version>
-            <scope>compile</scope>
+            <version>${project.version}</version>
         </dependency>
         <dependency>
             <groupId>org.projectlombok</groupId>

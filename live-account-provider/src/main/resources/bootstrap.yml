@@ -17,4 +17,4 @@ spring:
         namespace: live-test
   config:
     import:
-      - optional:nacos:live-api.yaml
+      - optional:nacos:live-account-provider.yaml

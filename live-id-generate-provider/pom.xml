@@ -9,7 +9,6 @@
 
     <artifactId>live-id-generate-provider</artifactId>
     <packaging>jar</packaging>
-    <name>live-id-generate-provider</name>
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
