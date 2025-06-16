@@ -7,7 +7,7 @@ import org.springframework.context.annotation.Configuration;
 @Conditional(RedisKeyLoadMatch.class)
 public class AccountProviderCacheKeyBuilder extends RedisKeyBuilder {
 
-    private static String ACCOUNT_TOKEN_KEY = "account";
+    private static final String ACCOUNT_TOKEN_KEY = "account";
 
     public String buildUserLoginTokenKey(String key) {
         return super.getPrefix() + ACCOUNT_TOKEN_KEY + super.getSplitItem() + key;

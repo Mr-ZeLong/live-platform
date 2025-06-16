@@ -15,7 +15,7 @@ import java.util.List;
  */
 public class RedisKeyLoadMatch implements Condition {
 
-    private final static Logger LOGGER = LoggerFactory.getLogger(RedisKeyLoadMatch.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(RedisKeyLoadMatch.class);
 
     private static final String PREFIX = "live";
 
