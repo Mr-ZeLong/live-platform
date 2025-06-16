@@ -74,4 +74,15 @@
         </dependency>
     </dependencies>
 
+    <build>
+        <finalName>${artifactId}-docker</finalName>
+        <plugins>
+            <!-- 将springboot应用打包成jar-->
+            <plugin>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-maven-plugin</artifactId>
+            </plugin>
+        </plugins>
+    </build>
+
 </project>

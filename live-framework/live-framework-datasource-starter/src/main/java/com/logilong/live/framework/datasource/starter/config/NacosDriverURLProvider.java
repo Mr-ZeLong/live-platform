@@ -16,7 +16,7 @@ import java.util.Properties;
 
 public class NacosDriverURLProvider implements ShardingSphereDriverURLProvider {
 
-    private static Logger logger = LoggerFactory.getLogger(NacosDriverURLProvider.class);
+    private static final Logger logger = LoggerFactory.getLogger(NacosDriverURLProvider.class);
     private static final String NACOS_TYPE = "nacos:";
     private static final String GROUP = "DEFAULT_GROUP";
 

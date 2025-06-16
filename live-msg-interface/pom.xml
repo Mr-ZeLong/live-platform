@@ -15,6 +15,11 @@
     </properties>
 
     <dependencies>
-
+        <dependency>
+            <groupId>org.projectlombok</groupId>
+            <artifactId>lombok</artifactId>
+            <version>${lombook.version}</version>
+            <scope>provided</scope>
+        </dependency>
     </dependencies>
 </project>
