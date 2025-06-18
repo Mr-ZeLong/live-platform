@@ -7,14 +7,13 @@ import io.netty.handler.codec.MessageToByteEncoder;
 /**
  * 处理消息的编码过程
  */
-public class TcpImMsgEncoder extends MessageToByteEncoder {
+public class TcpImMsgEncoder extends MessageToByteEncoder<ImMsg> {
 
     @Override
-    protected void encode(ChannelHandlerContext ctx, Object msg, ByteBuf out) throws Exception {
-        ImMsg imMsg = (ImMsg) msg;
-        out.writeShort(imMsg.getMagic());
-        out.writeInt(imMsg.getCode());
-        out.writeInt(imMsg.getLen());
-        out.writeBytes(imMsg.getBody());
+    protected void encode(ChannelHandlerContext ctx, ImMsg msg, ByteBuf out) throws Exception {
+        out.writeShort(msg.getMagic());
+        out.writeInt(msg.getCode());
+        out.writeInt(msg.getLen());
+        out.writeBytes(msg.getBody());
     }
 }

@@ -16,7 +16,7 @@ public class TcpImMsgDecoder extends ByteToMessageDecoder {
 
     @Override
     protected void decode(ChannelHandlerContext ctx, ByteBuf byteBuf, List<Object> out) throws Exception {
-        //bytebuf内容的基本校验，长度校验，magic值校验
+        //byteBuf内容的基本校验，长度校验，magic值校验
         if (byteBuf.readableBytes() >= BASE_LEN) {
             if (byteBuf.readShort() != ImConstants.DEFAULT_MAGIC) {
                 ctx.close();
@@ -24,14 +24,14 @@ public class TcpImMsgDecoder extends ByteToMessageDecoder {
             }
             int code = byteBuf.readInt();
             int len = byteBuf.readInt();
-            //确保bytebuf剩余的消息长度足够
+            //确保byteBuf剩余的消息长度足够
             if (byteBuf.readableBytes() < len) {
                 ctx.close();
                 return;
             }
             byte[] body = new byte[len];
             byteBuf.readBytes(body);
-            //将bytebuf转换为immsg对象
+            //将byteBuf转换为imMsg对象
             ImMsg imMsg = new ImMsg();
             imMsg.setCode(code);
             imMsg.setLen(len);

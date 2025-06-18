@@ -10,7 +10,7 @@ import lombok.ToString;
 @AllArgsConstructor
 public enum AppIdEnum {
 
-    LIVE_BIZ(10001,"旗鱼直播业务");
+    LIVE_BIZ(10001,"直播业务");
 
     private final int code;
     private final String desc;
