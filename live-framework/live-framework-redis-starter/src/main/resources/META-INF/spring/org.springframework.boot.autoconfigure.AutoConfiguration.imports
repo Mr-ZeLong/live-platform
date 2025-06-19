@@ -3,3 +3,4 @@ com.logilong.live.framework.redis.starter.key.UserProviderCacheKeyBuilder
 com.logilong.live.framework.redis.starter.key.AccountProviderCacheKeyBuilder
 com.logilong.live.framework.redis.starter.key.ImProviderCacheKeyBuilder
 com.logilong.live.framework.redis.starter.key.ImCoreServerProviderCacheKeyBuilder
+com.logilong.live.framework.redis.starter.key.LivingProviderCacheKeyBuilder

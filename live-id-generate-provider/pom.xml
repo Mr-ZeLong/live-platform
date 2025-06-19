@@ -8,7 +8,7 @@
     </parent>
 
     <artifactId>live-id-generate-provider</artifactId>
-    <packaging>jar</packaging>
+    <description>提供IM服务的扩展功能，例如判断某个用户是否在线以及在线时长等功能</description>
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>

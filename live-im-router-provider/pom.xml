@@ -8,6 +8,9 @@
     </parent>
 
     <artifactId>live-im-router-provider</artifactId>
+    <description>
+        IM路由中转服务，将业务请求转到对应的im-core-server进行处理
+    </description>
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>

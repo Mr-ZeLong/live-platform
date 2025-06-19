@@ -16,7 +16,7 @@ import org.springframework.stereotype.Component;
  */
 @Component
 @ChannelHandler.Sharable
-public class TcpImServerCoreHandler extends SimpleChannelInboundHandler {
+public class TcpImServerCoreHandler extends SimpleChannelInboundHandler<ImMsg> {
 
     @Resource
     private ImHandlerFactory imHandlerFactory;
@@ -26,12 +26,8 @@ public class TcpImServerCoreHandler extends SimpleChannelInboundHandler {
     private LogoutMsgHandler logoutMsgHandler;
 
     @Override
-    protected void channelRead0(ChannelHandlerContext ctx, Object msg) throws Exception {
-        if (!(msg instanceof ImMsg)) {
-            throw new IllegalArgumentException("error msg,msg is :" + msg);
-        }
-        ImMsg imMsg = (ImMsg) msg;
-        imHandlerFactory.doMsgHandler(ctx, imMsg);
+    protected void channelRead0(ChannelHandlerContext ctx, ImMsg msg) throws Exception {
+        imHandlerFactory.doMsgHandler(ctx, msg);
     }
 
     /**

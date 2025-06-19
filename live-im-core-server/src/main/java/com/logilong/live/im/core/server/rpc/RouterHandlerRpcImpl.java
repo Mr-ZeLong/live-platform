@@ -8,11 +8,6 @@ import com.logilong.live.im.dto.ImMsgBody;
 
 import java.util.List;
 
-/**
- * @Author idea
- * @Date: Created in 10:20 2023/7/12
- * @Description
- */
 @DubboService
 public class RouterHandlerRpcImpl implements IRouterHandlerRpc {
 

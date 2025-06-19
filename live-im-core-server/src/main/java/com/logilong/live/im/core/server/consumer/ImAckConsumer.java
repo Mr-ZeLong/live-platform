@@ -40,7 +40,7 @@ public class ImAckConsumer implements InitializingBean {
         //每次只拉取一条消息
         mqPushConsumer.setConsumeMessageBatchMaxSize(1);
         mqPushConsumer.setConsumeFromWhere(ConsumeFromWhere.CONSUME_FROM_FIRST_OFFSET);
-        mqPushConsumer.subscribe(ImCoreServerProviderTopicNames.QIYU_LIVE_IM_ACK_MSG_TOPIC, "");
+        mqPushConsumer.subscribe(ImCoreServerProviderTopicNames.LIVE_IM_ACK_MSG_TOPIC, "");
         mqPushConsumer.setMessageListener((MessageListenerConcurrently) (msgs, context) -> {
             String json = new String(msgs.get(0).getBody());
             ImMsgBody imMsgBody = JSON.parseObject(json, ImMsgBody.class);

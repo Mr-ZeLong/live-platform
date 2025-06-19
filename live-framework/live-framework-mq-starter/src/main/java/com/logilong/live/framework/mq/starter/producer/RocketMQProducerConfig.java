@@ -29,6 +29,17 @@ public class RocketMQProducerConfig {
                 return new Thread(r, "rocketmq-async-thread-" + new Random().ints().toString());
             }
         });
+        DefaultMQProducer defaultMQProducer = getDefaultMQProducer(asyncThreadPool);
+        try {
+            defaultMQProducer.start();
+            System.out.println("=============== mq生产者启动成功,namesrv is " + rocketMQProducerProperties.getNameSrv() + " ==================");
+        } catch (MQClientException e) {
+            throw new RuntimeException(e);
+        }
+        return defaultMQProducer;
+    }
+
+    private DefaultMQProducer getDefaultMQProducer(ThreadPoolExecutor asyncThreadPool) {
         DefaultMQProducer defaultMQProducer = new DefaultMQProducer();
         defaultMQProducer.setProducerGroup(rocketMQProducerProperties.getGroupName());
         defaultMQProducer.setNamesrvAddr(rocketMQProducerProperties.getNameSrv());
@@ -36,12 +47,6 @@ public class RocketMQProducerConfig {
         defaultMQProducer.setRetryTimesWhenSendAsyncFailed(rocketMQProducerProperties.getRetryTimes());
         defaultMQProducer.setRetryAnotherBrokerWhenNotStoreOK(true);
         defaultMQProducer.setAsyncSenderExecutor(asyncThreadPool);
-        try {
-            defaultMQProducer.start();
-            System.out.println("=============== mq生产者启动成功,namesrv is " + rocketMQProducerProperties.getNameSrv() + " ==================");
-        } catch (MQClientException e) {
-            throw new RuntimeException(e);
-        }
         return defaultMQProducer;
     }
 }

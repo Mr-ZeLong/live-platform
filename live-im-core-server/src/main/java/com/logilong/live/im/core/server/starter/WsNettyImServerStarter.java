@@ -1,5 +1,6 @@
 package com.logilong.live.im.core.server.starter;
 
+import com.logilong.live.im.core.server.handler.ws.WsShakeHandler;
 import io.netty.bootstrap.ServerBootstrap;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelFuture;
@@ -13,7 +14,6 @@ import jakarta.annotation.Resource;
 import com.logilong.live.im.core.server.common.ChannelHandlerContextCache;
 import com.logilong.live.im.core.server.common.WebsocketEncoder;
 import com.logilong.live.im.core.server.handler.ws.WsImServerCoreHandler;
-import com.logilong.live.im.core.server.handler.ws.WsSharkHandler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.InitializingBean;
@@ -36,7 +36,7 @@ public class WsNettyImServerStarter implements InitializingBean {
     @Value("${qiyu.im.ws.port}")
     private int port;
     @Resource
-    private WsSharkHandler wsSharkHandler;
+    private WsShakeHandler wsShakeHandler;
     @Resource
     private WsImServerCoreHandler wsImServerCoreHandler;
     @Resource
@@ -64,7 +64,7 @@ public class WsNettyImServerStarter implements InitializingBean {
                 //http数据在传输过程中是分段 就是可以将多个段聚合 这就是为什么当浏览器发生大量数据时 就会发生多次http请求
                 ch.pipeline().addLast(new HttpObjectAggregator(8192));
                 ch.pipeline().addLast(new WebsocketEncoder());
-                ch.pipeline().addLast(wsSharkHandler);
+                ch.pipeline().addLast(wsShakeHandler);
                 ch.pipeline().addLast(wsImServerCoreHandler);
             }
         });

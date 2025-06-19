@@ -9,6 +9,8 @@
 
   <artifactId>live-im-provider</artifactId>
 
+  <description></description>
+
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
   </properties>

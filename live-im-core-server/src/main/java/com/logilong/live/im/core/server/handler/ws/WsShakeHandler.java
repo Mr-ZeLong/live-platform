@@ -20,9 +20,9 @@ import org.springframework.stereotype.Component;
  */
 @Component
 @ChannelHandler.Sharable
-public class WsSharkHandler extends ChannelInboundHandlerAdapter {
+public class WsShakeHandler extends ChannelInboundHandlerAdapter {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(WsSharkHandler.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(WsShakeHandler.class);
 
     //指定监听的端口
     @Value("${im.ws.port}")
@@ -35,7 +35,7 @@ public class WsSharkHandler extends ChannelInboundHandlerAdapter {
     private LoginMsgHandler loginMsgHandler;
 
     private WebSocketServerHandshaker webSocketServerHandshaker;
-    private static Logger logger = LoggerFactory.getLogger(WsSharkHandler.class);
+    private static final Logger logger = LoggerFactory.getLogger(WsShakeHandler.class);
 
     @Override
     public void channelRead(ChannelHandlerContext ctx, Object msg) {
@@ -69,7 +69,7 @@ public class WsSharkHandler extends ChannelInboundHandlerAdapter {
         //token的尾部就是appId
         Integer appId = Integer.valueOf(token.substring(token.lastIndexOf("%") + 1));
         if (queryUserId == null || !queryUserId.equals(userId)) {
-            LOGGER.error("[WsSharkHandler] token 校验不通过！");
+            LOGGER.error("[WsShakeHandler] token 校验不通过！");
             //校验不通过，不允许建立连接
             ctx.close();
             return;
