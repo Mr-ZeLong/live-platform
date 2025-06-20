@@ -1,24 +1,20 @@
 package com.logilong.live.msg.provider.service.impl;
 
-import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
-import com.baomidou.mybatisplus.core.metadata.IPage;
-import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.cloopen.rest.sdk.BodyType;
 import com.cloopen.rest.sdk.CCPRestSmsSDK;
 import jakarta.annotation.Resource;
 import org.apache.commons.lang3.RandomUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.ibatis.binding.MapperProxy;
-import org.idea.qiyu.live.framework.redis.starter.key.MsgProviderCacheKeyBuilder;
-import org.qiyu.live.common.interfaces.utils.DESUtils;
-import org.qiyu.live.msg.dto.MsgCheckDTO;
-import org.qiyu.live.msg.enums.MsgSendResultEnum;
-import org.qiyu.live.msg.provider.config.ApplicationProperties;
-import org.qiyu.live.msg.provider.config.SmsTemplateIDEnum;
-import org.qiyu.live.msg.provider.config.ThreadPoolManager;
-import org.qiyu.live.msg.provider.dao.mapper.SmsMapper;
-import org.qiyu.live.msg.provider.dao.po.SmsPO;
-import org.qiyu.live.msg.provider.service.ISmsService;
+import com.logilong.live.framework.redis.starter.key.MsgProviderCacheKeyBuilder;
+import com.logilong.live.common.interfaces.utils.DESUtils;
+import com.logilong.live.msg.dto.MsgCheckDTO;
+import com.logilong.live.msg.enums.MsgSendResultEnum;
+import com.logilong.live.msg.provider.config.ApplicationProperties;
+import com.logilong.live.msg.provider.config.SmsTemplateIDEnum;
+import com.logilong.live.msg.provider.config.ThreadPoolManager;
+import com.logilong.live.msg.provider.dao.mapper.SmsMapper;
+import com.logilong.live.msg.provider.dao.po.SmsPO;
+import com.logilong.live.msg.provider.service.ISmsService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
@@ -26,21 +22,15 @@ import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 
 import java.util.HashMap;
-import java.util.List;
 import java.util.Set;
 import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 
 
-/**
- * @Author idea
- * @Date: Created in 17:30 2023/6/11
- * @Description
- */
 @Service
 public class SmsServiceImpl implements ISmsService {
 
-    private static Logger logger = LoggerFactory.getLogger(SmsServiceImpl.class);
+    private static final Logger logger = LoggerFactory.getLogger(SmsServiceImpl.class);
 
     @Resource
     private RedisTemplate<String, Object> redisTemplate;
@@ -60,7 +50,7 @@ public class SmsServiceImpl implements ISmsService {
         }
         //生成验证码，4位，6位（取它），有效期（30s，60s），同一个手机号不能重发，redis去存储验证码
         String codeCacheKey = msgProviderCacheKeyBuilder.buildSmsLoginCodeKey(phone);
-        if (redisTemplate.hasKey(codeCacheKey)) {
+        if (Boolean.TRUE.equals(redisTemplate.hasKey(codeCacheKey))) {
             logger.warn("该手机号短信发送过于频繁，phone is {}", phone);
             return MsgSendResultEnum.SEND_FAIL;
         }

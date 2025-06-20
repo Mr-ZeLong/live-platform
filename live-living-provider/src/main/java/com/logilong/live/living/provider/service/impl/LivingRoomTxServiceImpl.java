@@ -2,7 +2,7 @@ package com.logilong.live.living.provider.service.impl;
 
 import jakarta.annotation.Resource;
 import com.logilong.live.framework.redis.starter.key.LivingProviderCacheKeyBuilder;
-import com.logilong.live.common.interfaces.enums.CommonStatusEum;
+import com.logilong.live.common.interfaces.enums.CommonStatusEnum;
 import com.logilong.live.common.interfaces.utils.ConvertBeanUtils;
 import com.logilong.live.living.interfaces.dto.LivingRoomReqDTO;
 import com.logilong.live.living.interfaces.dto.LivingRoomRespDTO;
@@ -44,7 +44,7 @@ public class LivingRoomTxServiceImpl implements ILivingRoomTxService {
         }
         LivingRoomRecordPO livingRoomRecordPO = ConvertBeanUtils.convert(livingRoomRespDTO, LivingRoomRecordPO.class);
         livingRoomRecordPO.setEndTime(new Date());
-        livingRoomRecordPO.setStatus(CommonStatusEum.INVALID_STATUS.getCode());
+        livingRoomRecordPO.setStatus(CommonStatusEnum.INVALID_STATUS.getCode());
         livingRoomRecordMapper.insert(livingRoomRecordPO);
         livingRoomMapper.deleteById(livingRoomRecordPO.getId());
         //移除掉直播间cache

@@ -1,0 +1,2 @@
+com.logilong.live.web.starter.config.WebConfig
+com.logilong.live.web.starter.error.GlobalExceptionHandler

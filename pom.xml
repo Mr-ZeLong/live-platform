@@ -36,6 +36,10 @@
         <module>live-bank-interface</module>
         <module>live-living-interface</module>
         <module>live-living-provider</module>
+        <module>live-gift-interface</module>
+        <module>live-framework/live-framework-web-starter</module>
+        <module>live-gift-provider</module>
+        <module>live-bank-provider</module>
     </modules>
 
     <properties>

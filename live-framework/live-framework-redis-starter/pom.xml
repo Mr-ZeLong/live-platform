@@ -6,14 +6,8 @@
         <artifactId>live-framework</artifactId>
         <version>1.0</version>
     </parent>
-
     <artifactId>live-framework-redis-starter</artifactId>
-    <packaging>jar</packaging>
 
-
-    <properties>
-        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    </properties>
 
     <dependencies>
         <dependency>

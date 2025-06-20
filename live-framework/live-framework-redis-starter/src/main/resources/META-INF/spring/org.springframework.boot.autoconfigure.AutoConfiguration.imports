@@ -1,6 +1,9 @@
 com.logilong.live.framework.redis.starter.config.RedisConfig
 com.logilong.live.framework.redis.starter.key.UserProviderCacheKeyBuilder
 com.logilong.live.framework.redis.starter.key.AccountProviderCacheKeyBuilder
+com.logilong.live.framework.redis.starter.key.MsgProviderCacheKeyBuilder
 com.logilong.live.framework.redis.starter.key.ImProviderCacheKeyBuilder
 com.logilong.live.framework.redis.starter.key.ImCoreServerProviderCacheKeyBuilder
 com.logilong.live.framework.redis.starter.key.LivingProviderCacheKeyBuilder
+com.logilong.live.framework.redis.starter.key.GiftProviderCacheKeyBuilder
+com.logilong.live.framework.redis.starter.key.BankProviderCacheKeyBuilder

@@ -8,7 +8,7 @@ services:
     volumes:
       - /tmp/logs/live-im-provider:/tmp/logs/live-im-provider
     environment:
-      - DUBBO_IP_TO_REGISTRY=192.168.1.7
+      - DUBBO_IP_TO_REGISTRY=192.168.0.254
       - DUBBO_PORT_TO_REGISTRY=9010
       - TZ=Asia/Shanghai
       - JAVA_OPTS=-XX:MetaspaceSize=128m -XX:MaxMetaspaceSize=128m -Xms512m -Xmx512m -Xmn128m -Xss256k

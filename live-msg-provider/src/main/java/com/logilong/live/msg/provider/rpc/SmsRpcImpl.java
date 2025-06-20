@@ -2,16 +2,12 @@ package com.logilong.live.msg.provider.rpc;
 
 import jakarta.annotation.Resource;
 import org.apache.dubbo.config.annotation.DubboService;
-import org.qiyu.live.msg.dto.MsgCheckDTO;
-import org.qiyu.live.msg.enums.MsgSendResultEnum;
-import org.qiyu.live.msg.interfaces.ISmsRpc;
-import org.qiyu.live.msg.provider.service.ISmsService;
+import com.logilong.live.msg.dto.MsgCheckDTO;
+import com.logilong.live.msg.enums.MsgSendResultEnum;
+import com.logilong.live.msg.interfaces.ISmsRpc;
+import com.logilong.live.msg.provider.service.ISmsService;
 
-/**
- * @Author idea
- * @Date: Created in 17:20 2023/6/11
- * @Description
- */
+
 @DubboService
 public class SmsRpcImpl implements ISmsRpc {
 

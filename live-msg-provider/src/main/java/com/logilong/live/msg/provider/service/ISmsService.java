@@ -1,13 +1,9 @@
 package com.logilong.live.msg.provider.service;
 
-import org.qiyu.live.msg.dto.MsgCheckDTO;
-import org.qiyu.live.msg.enums.MsgSendResultEnum;
+import com.logilong.live.msg.dto.MsgCheckDTO;
+import com.logilong.live.msg.enums.MsgSendResultEnum;
 
-/**
- * @Author idea
- * @Date: Created in 17:30 2023/6/11
- * @Description
- */
+
 public interface ISmsService {
 
     /**

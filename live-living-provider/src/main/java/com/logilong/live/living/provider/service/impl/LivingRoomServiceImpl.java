@@ -6,7 +6,7 @@ import jakarta.annotation.Resource;
 import org.apache.dubbo.config.annotation.DubboReference;
 import com.logilong.live.framework.redis.starter.key.LivingProviderCacheKeyBuilder;
 import com.logilong.live.common.interfaces.dto.PageWrapper;
-import com.logilong.live.common.interfaces.enums.CommonStatusEum;
+import com.logilong.live.common.interfaces.enums.CommonStatusEnum;
 import com.logilong.live.common.interfaces.utils.ConvertBeanUtils;
 import com.logilong.live.im.constants.AppIdEnum;
 import com.logilong.live.im.core.server.interfaces.dto.ImOfflineDTO;
@@ -102,7 +102,7 @@ public class LivingRoomServiceImpl implements ILivingRoomService {
     @Override
     public List<LivingRoomRespDTO> listAllLivingRoomFromDB(Integer type) {
         LambdaQueryWrapper<LivingRoomPO> queryWrapper = new LambdaQueryWrapper<>();
-        queryWrapper.eq(LivingRoomPO::getStatus, CommonStatusEum.VALID_STATUS.getCode());
+        queryWrapper.eq(LivingRoomPO::getStatus, CommonStatusEnum.VALID_STATUS.getCode());
         queryWrapper.eq(LivingRoomPO::getType, type);
         //按照时间倒序展示
         queryWrapper.orderByDesc(LivingRoomPO::getId);
@@ -143,7 +143,7 @@ public class LivingRoomServiceImpl implements ILivingRoomService {
         }
         LambdaQueryWrapper<LivingRoomPO> queryWrapper = new LambdaQueryWrapper();
         queryWrapper.eq(LivingRoomPO::getId, roomId);
-        queryWrapper.eq(LivingRoomPO::getStatus, CommonStatusEum.VALID_STATUS.getCode());
+        queryWrapper.eq(LivingRoomPO::getStatus, CommonStatusEnum.VALID_STATUS.getCode());
         queryWrapper.last("limit 1");
         queryResult = ConvertBeanUtils.convert(livingRoomMapper.selectOne(queryWrapper), LivingRoomRespDTO.class);
         if (queryResult == null) {
@@ -161,7 +161,7 @@ public class LivingRoomServiceImpl implements ILivingRoomService {
     @Override
     public Integer startLivingRoom(LivingRoomReqDTO livingRoomReqDTO) {
         LivingRoomPO livingRoomPO = ConvertBeanUtils.convert(livingRoomReqDTO, LivingRoomPO.class);
-        livingRoomPO.setStatus(CommonStatusEum.VALID_STATUS.getCode());
+        livingRoomPO.setStatus(CommonStatusEnum.VALID_STATUS.getCode());
         livingRoomPO.setStartTime(new Date());
         livingRoomMapper.insert(livingRoomPO);
         String cacheKey = cacheKeyBuilder.buildLivingRoomObj(livingRoomPO.getId());

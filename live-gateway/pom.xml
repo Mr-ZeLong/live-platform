@@ -47,6 +47,13 @@
             <version>${spring-cloud-starter-bootstrap.version}</version>
         </dependency>
         <dependency>
+            <groupId>org.projectlombok</groupId>
+            <artifactId>lombok</artifactId>
+            <version>${lombok.version}</version> <!-- 使用最新版本 -->
+            <scope>provided</scope>
+        </dependency>
+        <!-- 下面是自定义组件 -->
+        <dependency>
             <groupId>com.logilong</groupId>
             <artifactId>live-common-interface</artifactId>
             <version>${project.version}</version>

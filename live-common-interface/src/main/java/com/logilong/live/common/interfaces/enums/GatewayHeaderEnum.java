@@ -4,14 +4,16 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.ToString;
 
+/**
+ * 网关服务传递给下游的header枚举
+ */
 @AllArgsConstructor
 @Getter
 @ToString
-public enum CommonStatusEum {
+public enum GatewayHeaderEnum {
 
-    INVALID_STATUS(0,"无效"),
-    VALID_STATUS(1,"有效");
+    USER_LOGIN_ID("用户id","gh_user_id");
 
-    final int code;
     final String desc;
+    final String name;
 }

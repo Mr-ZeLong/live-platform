@@ -1,0 +1,16 @@
+version: '3'
+services:
+  live-gift-provider-1:
+    container_name: live-gift-provider-1
+    image: 'live-gift-provider-docker:1.0'
+    ports:
+      - "9098:9090"
+    volumes:
+      - /tmp/logs/live-gift-provider:/tmp/logs/live-gift-provider
+    environment:
+      - DUBBO_IP_TO_REGISTRY=192.168.0.254
+      - DUBBO_PORT_TO_REGISTRY=9098
+      - TZ=Asia/Shanghai
+      - JAVA_OPTS=-DNACOS_USER=nacos -DNACOS_PWD=nacos -XX:MetaspaceSize=128m -XX:MaxMetaspaceSize=128m -Xms512m -Xmx512m -Xmn128m -Xss256k
+    extra_hosts:
+      - 'live-server:192.168.0.254'
