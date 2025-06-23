@@ -35,7 +35,7 @@ public class RequestLimitInterceptor implements HandlerInterceptor {
             if (hasLimit) {
                 //是否需要限制请求
                 RequestLimit requestLimit = handlerMethod.getMethod().getAnnotation(RequestLimit.class);
-                Long userId = RequesterContext.getUserId();
+                Long userId = LiveRequestContext.getUserId();
                 if (userId == null) {
                     return true;
                 }

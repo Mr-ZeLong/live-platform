@@ -8,8 +8,6 @@
     </parent>
 
     <artifactId>live-api</artifactId>
-    <packaging>jar</packaging>
-    <name>live-api</name>
 
     <properties>
         <maven.compiler.source>17</maven.compiler.source>
@@ -30,11 +28,16 @@
             <artifactId>spring-cloud-starter-bootstrap</artifactId>
             <version>${spring-cloud-starter-bootstrap.version}</version>
         </dependency>
-
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-web</artifactId>
             <version>${springboot.version}</version>
+            <exclusions>
+                <exclusion>
+                    <artifactId>log4j-to-slf4j</artifactId>
+                    <groupId>org.apache.logging.log4j</groupId>
+                </exclusion>
+            </exclusions>
         </dependency>
         <dependency>
             <groupId>com.alibaba.cloud</groupId>
@@ -44,6 +47,17 @@
             <groupId>com.alibaba.cloud</groupId>
             <artifactId>spring-cloud-starter-alibaba-nacos-config</artifactId>
         </dependency>
+        <dependency>
+            <groupId>com.github.ben-manes.caffeine</groupId>
+            <artifactId>caffeine</artifactId>
+            <version>${caffeine.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.projectlombok</groupId>
+            <artifactId>lombok</artifactId>
+            <version>${lombok.version}</version> <!-- 使用最新版本 -->
+            <scope>provided</scope>
+        </dependency>
 
         <!-- 下面是自定义组件 -->
         <dependency>
@@ -51,7 +65,54 @@
             <artifactId>live-user-interface</artifactId>
             <version>${project.version}</version>
         </dependency>
+        <dependency>
+            <groupId>com.logilong</groupId>
+            <artifactId>live-common-interface</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.logilong</groupId>
+            <artifactId>live-account-interface</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.logilong</groupId>
+            <artifactId>live-framework-mq-starter</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.logilong</groupId>
+            <artifactId>live-framework-web-starter</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.logilong</groupId>
+            <artifactId>live-msg-interface</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.logilong</groupId>
+            <artifactId>live-im-interface</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.logilong</groupId>
+            <artifactId>live-living-interface</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.logilong</groupId>
+            <artifactId>live-gift-interface</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.logilong</groupId>
+            <artifactId>live-bank-interface</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+
     </dependencies>
+
 
     <build>
         <finalName>live-api-docker</finalName>

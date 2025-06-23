@@ -37,7 +37,6 @@
         <module>live-living-interface</module>
         <module>live-living-provider</module>
         <module>live-gift-interface</module>
-        <module>live-framework/live-framework-web-starter</module>
         <module>live-gift-provider</module>
         <module>live-bank-provider</module>
     </modules>
@@ -65,6 +64,7 @@
         <slf4j.version>2.0.6</slf4j.version>
         <cloopen-sms.version>1.0.4</cloopen-sms.version>
         <calcite-core.version>1.32.0</calcite-core.version>
+        <caffeine.version>2.6.2</caffeine.version>
         <maven.compiler.source>17</maven.compiler.source>
         <maven.compiler.target>17</maven.compiler.target>
         <maven.compiler.compilerVersion>17</maven.compiler.compilerVersion>

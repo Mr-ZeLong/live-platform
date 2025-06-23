@@ -9,7 +9,7 @@ import java.util.Map;
 /**
  * 直播 用户请求上下文
  */
-public class RequesterContext {
+public class LiveRequestContext {
 
     private static final ThreadLocal<Map<Object, Object>> resources = new InheritableThreadLocalMap<>();
 

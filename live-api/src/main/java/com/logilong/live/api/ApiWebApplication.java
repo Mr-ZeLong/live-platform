@@ -5,12 +5,14 @@ import org.springframework.boot.WebApplicationType;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.cloud.client.discovery.EnableDiscoveryClient;
 
+
 @SpringBootApplication
 @EnableDiscoveryClient
 public class ApiWebApplication {
+
     public static void main(String[] args) {
-        SpringApplication app = new SpringApplication(ApiWebApplication.class);
-        app.setWebApplicationType(WebApplicationType.SERVLET);
-        app.run(args);
+        SpringApplication springApplication = new SpringApplication(ApiWebApplication.class);
+        springApplication.setWebApplicationType(WebApplicationType.SERVLET);
+        springApplication.run(args);
     }
 }

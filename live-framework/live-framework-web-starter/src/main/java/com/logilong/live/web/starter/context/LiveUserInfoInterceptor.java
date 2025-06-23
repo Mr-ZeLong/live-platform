@@ -23,12 +23,12 @@ public class LiveUserInfoInterceptor implements HandlerInterceptor {
             return true;
         }
         //如果userId不为空，则把它放在线程本地变量里面去
-        RequesterContext.set(RequestConstants.LIVE_USER_ID, Long.valueOf(userIdStr));
+        LiveRequestContext.set(RequestConstants.LIVE_USER_ID, Long.valueOf(userIdStr));
         return true;
     }
 
     @Override
     public void postHandle(HttpServletRequest request, HttpServletResponse response, Object handler, ModelAndView modelAndView) throws Exception {
-        RequesterContext.clear();
+        LiveRequestContext.clear();
     }
 }
