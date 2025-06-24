@@ -13,34 +13,33 @@ import java.util.List;
 public interface ILivingRoomService {
 
     /**
-     * 支持根据roomId查询出批量的userId（set）存储，3000个人，元素非常多，O(n)
+     * 开启直播间
      *
      * @param livingRoomReqDTO
      * @return
      */
-    List<Long> queryUserIdByRoomId(LivingRoomReqDTO livingRoomReqDTO);
+    Integer startLivingRoom(LivingRoomReqDTO livingRoomReqDTO);
 
     /**
-     * 用户下线处理
+     * 关闭直播间
      *
-     * @param imOfflineDTO
-     */
-    void userOfflineHandler(ImOfflineDTO imOfflineDTO);
-
-    /**
-     * 用户上线处理
-     *
-     * @param imOnlineDTO
-     */
-    void userOnlineHandler(ImOnlineDTO imOnlineDTO);
-
-     /**
-     * 查询所有的直播间类型
-     *
-     * @param type
+     * @param livingRoomReqDTO
      * @return
      */
-    List<LivingRoomRespDTO> listAllLivingRoomFromDB(Integer type);
+    boolean closeLiving(LivingRoomReqDTO livingRoomReqDTO);
+
+    /**
+     * 根据用户id查询是否正在开播
+     *
+     * @param roomId
+     * @return
+     */
+    LivingRoomRespDTO queryByRoomId(Integer roomId);
+
+    /**
+     * 根据主播id查询直播间
+     */
+    LivingRoomRespDTO queryByAnchorId(Long anchorId);
 
     /**
      * 直播间列表的分页查询
@@ -51,29 +50,26 @@ public interface ILivingRoomService {
     PageWrapper<LivingRoomRespDTO> list(LivingRoomReqDTO livingRoomReqDTO);
 
     /**
-     * 根据roomId查询直播间
-     *
-     * @param roomId
+     * 从DB查询对应类型所有的直播间列表
+     * @param type
      * @return
      */
-    LivingRoomRespDTO queryByRoomId(Integer roomId);
+    List<LivingRoomRespDTO> listAllLivingRoomFromDB(Integer type);
 
     /**
-     * 开启直播间
-     *
-     * @param livingRoomReqDTO
-     * @return
+     * 用户登录在线roomId与userId关联处理
      */
-    Integer startLivingRoom(LivingRoomReqDTO livingRoomReqDTO);
-
+    void userOnlineHandler(ImOnlineDTO imOnlineDTO);
 
     /**
-     * 根据roomId查询当前pk人是谁
-     *
-     * @param roomId
-     * @return
+     * 用户离线roomId与userId关联处理
      */
-    Long queryOnlinePkUserId(Integer roomId);
+    void userOfflineHandler(ImOfflineDTO imOfflineDTO);
+
+    /**
+     * 支持根据roomId查询出批量的userId（set）存储，3000个人，元素非常多，O(n)
+     */
+    List<Long> queryUserIdsByRoomId(LivingRoomReqDTO livingRoomReqDTO);
 
     /**
      * 用户在pk直播间中，连上线请求
@@ -83,12 +79,16 @@ public interface ILivingRoomService {
      */
     LivingPkRespDTO onlinePk(LivingRoomReqDTO livingRoomReqDTO);
 
-
     /**
-     * 用户在pk直播间中，下线请求
-     *
-     * @param livingRoomReqDTO
-     * @return
+     * 用户在pk直播间下线
      */
     boolean offlinePk(LivingRoomReqDTO livingRoomReqDTO);
+
+    /**
+     * 根据roomId查询当前pk人是谁
+     *
+     * @param roomId
+     * @return
+     */
+    Long queryOnlinePkUserId(Integer roomId);
 }

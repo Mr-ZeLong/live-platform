@@ -3,7 +3,7 @@ package com.logilong.live.im.router.provider.rpc;
 import jakarta.annotation.Resource;
 import org.apache.dubbo.config.annotation.DubboService;
 import com.logilong.live.im.dto.ImMsgBody;
-import com.logilong.live.im.router.interfaces.rpc.ImRouterRpc;
+import com.logilong.live.im.router.interfaces.ImRouterRpc;
 import com.logilong.live.im.router.provider.service.ImRouterService;
 
 import java.util.List;

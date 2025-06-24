@@ -17,12 +17,25 @@ public class LivingRoomRpcImpl implements ILivingRoomRpc {
 
     @Resource
     private ILivingRoomService livingRoomService;
-    @Resource
-    private ILivingRoomTxService livingRoomTxService;
 
     @Override
-    public List<Long> queryUserIdByRoomId(LivingRoomReqDTO livingRoomReqDTO) {
-        return livingRoomService.queryUserIdByRoomId(livingRoomReqDTO);
+    public Integer startLivingRoom(LivingRoomReqDTO livingRoomReqDTO) {
+        return livingRoomService.startLivingRoom(livingRoomReqDTO);
+    }
+
+    @Override
+    public LivingRoomRespDTO queryByAnchorId(Long anchorId) {
+        return livingRoomService.queryByAnchorId(anchorId);
+    }
+
+    @Override
+    public boolean closeLiving(LivingRoomReqDTO livingRoomReqDTO) {
+        return livingRoomService.closeLiving(livingRoomReqDTO);
+    }
+
+    @Override
+    public LivingRoomRespDTO queryByRoomId(Integer roomId) {
+        return livingRoomService.queryByRoomId(roomId);
     }
 
     @Override
@@ -31,33 +44,22 @@ public class LivingRoomRpcImpl implements ILivingRoomRpc {
     }
 
     @Override
-    public LivingRoomRespDTO queryByRoomId(Integer roomId) {
-        return livingRoomService.queryByRoomId(roomId);
-    }
-
-
-    @Override
-    public Integer startLivingRoom(LivingRoomReqDTO livingRoomReqDTO) {
-        return livingRoomService.startLivingRoom(livingRoomReqDTO);
+    public List<Long> queryUserIdsByRoomId(LivingRoomReqDTO livingRoomReqDTO) {
+        return livingRoomService.queryUserIdsByRoomId(livingRoomReqDTO);
     }
 
     @Override
-    public boolean closeLiving(LivingRoomReqDTO livingRoomReqDTO) {
-        return livingRoomTxService.closeLiving(livingRoomReqDTO);
-    }
-
-    @Override
-    public LivingPkRespDTO onlinePk(LivingRoomReqDTO livingRoomReqDTO) {
+    public LivingPkRespDTO onlinePK(LivingRoomReqDTO livingRoomReqDTO) {
         return livingRoomService.onlinePk(livingRoomReqDTO);
-    }
-
-    @Override
-    public Long queryOnlinePkUserId(Integer roomId) {
-        return livingRoomService.queryOnlinePkUserId(roomId);
     }
 
     @Override
     public boolean offlinePk(LivingRoomReqDTO livingRoomReqDTO) {
         return livingRoomService.offlinePk(livingRoomReqDTO);
+    }
+
+    @Override
+    public Long queryOnlinePkUserId(Integer roomId) {
+        return livingRoomService.queryOnlinePkUserId(roomId);
     }
 }

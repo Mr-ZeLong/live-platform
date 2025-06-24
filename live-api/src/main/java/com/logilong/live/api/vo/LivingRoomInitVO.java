@@ -3,7 +3,7 @@ package com.logilong.live.api.vo;
 import lombok.Data;
 
 @Data
-public class LivingRoomInitVO {
+public class  LivingRoomInitVO {
 
     private Long anchorId;
     private Long userId;

@@ -10,16 +10,11 @@ import com.logilong.live.web.starter.config.RequestLimit;
 import com.logilong.live.web.starter.context.LiveRequestContext;
 import com.logilong.live.web.starter.error.BizBaseErrorEnum;
 import com.logilong.live.web.starter.error.ErrorAssert;
-import com.logilong.live.web.starter.error.LiveBaseError;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-/**
- * @Author idea
- * @Date: Created in 21:14 2023/7/19
- * @Description
- */
+
 @RestController
 @RequestMapping("/living")
 public class LivingRoomController {

@@ -11,10 +11,7 @@ import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 
@@ -41,7 +38,7 @@ public class ImRouterServiceImpl implements ImRouterService {
 
     @Override
     public void batchSendMsg(List<ImMsgBody> imMsgBodyList) {
-        List<Long> userIdList = imMsgBodyList.stream().map(ImMsgBody::getUserId).collect(Collectors.toList());
+        List<Long> userIdList = imMsgBodyList.stream().map(ImMsgBody::getUserId).toList();
         //根据userId 将不同的userId的immsgbody分类存入map
         Map<Long, ImMsgBody> userIdMsgMap = imMsgBodyList.stream().collect(Collectors.toMap(ImMsgBody::getUserId, x -> x));
         //保证整个list集合的appId得是同一个
@@ -52,7 +49,7 @@ public class ImRouterServiceImpl implements ImRouterService {
             cacheKeyList.add(cacheKey);
         });
         //批量取出每个用户绑定的ip地址
-        List<String> ipList = stringRedisTemplate.opsForValue().multiGet(cacheKeyList).stream().filter(x -> x != null).collect(Collectors.toList());
+        List<String> ipList = stringRedisTemplate.opsForValue().multiGet(cacheKeyList).stream().filter(Objects::nonNull).toList();
         Map<String, List<Long>> userIdMap = new HashMap<>();
         ipList.forEach(ip -> {
             String currentIp = ip.substring(0, ip.indexOf("%"));

@@ -19,8 +19,8 @@ import com.logilong.live.framework.mq.starter.properties.RocketMQConsumerPropert
 import com.logilong.live.gift.constants.SendGiftTypeEnum;
 import com.logilong.live.im.constants.AppIdEnum;
 import com.logilong.live.im.dto.ImMsgBody;
-import com.logilong.live.im.router.interfaces.constants.ImMsgBizCodeEnum;
-import com.logilong.live.im.router.interfaces.rpc.ImRouterRpc;
+import com.logilong.live.im.router.constants.ImMsgBizCodeEnum;
+import com.logilong.live.im.router.interfaces.ImRouterRpc;
 import com.logilong.live.living.interfaces.dto.LivingRoomReqDTO;
 import com.logilong.live.living.interfaces.dto.LivingRoomRespDTO;
 import com.logilong.live.living.interfaces.rpc.ILivingRoomRpc;
@@ -150,7 +150,7 @@ public class SendGiftConsumer implements InitializingBean {
         // 直播pk进度是不是以roomId为维度，string，送礼（A）incr，送礼给（B）就是decr。
         Integer roomId = sendGiftMq.getRoomId();
         String isOverCacheKey = cacheKeyBuilder.buildLivingPkIsOver(roomId);
-        if (redisTemplate.hasKey(isOverCacheKey)) {
+        if (Boolean.TRUE.equals(redisTemplate.hasKey(isOverCacheKey))) {
             return;
         }
         LivingRoomRespDTO respDTO = livingRoomRpc.queryByRoomId(roomId);
@@ -161,7 +161,7 @@ public class SendGiftConsumer implements InitializingBean {
         Long pkUserId = respDTO.getAnchorId();
         Long pkNum = 0L;
         String pkNumKey = cacheKeyBuilder.buildLivingPkKey(roomId);
-        DefaultRedisScript<Long> redisScript = new DefaultRedisScript();
+        DefaultRedisScript<Long> redisScript = new DefaultRedisScript<>();
         redisScript.setScriptText(LUA_SCRIPT);
         redisScript.setResultType(Long.class);
         Long sendGiftSeqNum = System.currentTimeMillis();

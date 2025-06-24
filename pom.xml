@@ -39,6 +39,7 @@
         <module>live-gift-interface</module>
         <module>live-gift-provider</module>
         <module>live-bank-provider</module>
+        <module>live-bank-api</module>
     </modules>
 
     <properties>

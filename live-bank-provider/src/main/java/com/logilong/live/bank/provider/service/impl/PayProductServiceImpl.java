@@ -31,7 +31,7 @@ public class PayProductServiceImpl implements IPayProductService {
     @Override
     public List<PayProductDTO> products(Integer type) {
         String cacheKey = cacheKeyBuilder.buildPayProductCache(type);
-        List<PayProductDTO> cacheList = redisTemplate.opsForList().range(cacheKey, 0, 30).stream().map(x -> (PayProductDTO) x).collect(Collectors.toList());
+        List<PayProductDTO> cacheList = redisTemplate.opsForList().range(cacheKey, 0, 30).stream().map(x -> (PayProductDTO) x).toList();
         if (!CollectionUtils.isEmpty(cacheList)) {
             if (cacheList.get(0).getId() == null) {
                 return Collections.emptyList();

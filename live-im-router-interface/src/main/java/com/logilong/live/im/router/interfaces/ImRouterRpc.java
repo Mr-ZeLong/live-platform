@@ -1,4 +1,4 @@
-package com.logilong.live.im.router.interfaces.rpc;
+package com.logilong.live.im.router.interfaces;
 
 import com.logilong.live.im.dto.ImMsgBody;
 

@@ -11,7 +11,6 @@ import com.logilong.live.api.error.ApiErrorEnum;
 import com.logilong.live.api.service.IGiftService;
 import com.logilong.live.api.vo.req.GiftReqVO;
 import com.logilong.live.api.vo.resp.GiftConfigVO;
-import com.logilong.live.bank.interfaces.ILiveCurrencyAccountRpc;
 import com.logilong.live.common.interfaces.dto.SendGiftMq;
 import com.logilong.live.common.interfaces.topic.GiftProviderTopicNames;
 import com.logilong.live.common.interfaces.utils.ConvertBeanUtils;
@@ -35,10 +34,10 @@ public class GiftServiceImpl implements IGiftService {
 
     @DubboReference
     private IGiftConfigRpc giftConfigRpc;
-    @DubboReference
-    private ILiveCurrencyAccountRpc liveCurrencyAccountRpc;
+
     @Resource
     private MQProducer mqProducer;
+
     private final Cache<Integer,GiftConfigDTO> giftConfigDTOCache = Caffeine.newBuilder().maximumSize(1000).expireAfterWrite(90, TimeUnit.SECONDS).build();
 
     @Override

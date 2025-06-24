@@ -40,7 +40,6 @@ public class BankServiceImpl implements IBankService {
     @Override
     public PayProductVO products(Integer type) {
         List<PayProductDTO> payProductDTOS = payProductRpc.products(type);
-        PayProductVO payProductVO = new PayProductVO();
         List<PayProductItemVO> itemList = new ArrayList<>();
         for (PayProductDTO payProductDTO : payProductDTOS) {
             PayProductItemVO itemVO = new PayProductItemVO();
@@ -49,6 +48,7 @@ public class BankServiceImpl implements IBankService {
             itemVO.setCoinNum(JSON.parseObject(payProductDTO.getExtra()).getInteger("coin"));
             itemList.add(itemVO);
         }
+        PayProductVO payProductVO = new PayProductVO();
         payProductVO.setPayProductItemVOList(itemList);
         payProductVO.setCurrentBalance(Optional.ofNullable(liveCurrencyAccountRpc.getBalance(LiveRequestContext.getUserId())).orElse(0));
         return payProductVO;

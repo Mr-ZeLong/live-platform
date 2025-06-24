@@ -12,8 +12,8 @@ import com.logilong.live.im.constants.AppIdEnum;
 import com.logilong.live.im.core.server.interfaces.dto.ImOfflineDTO;
 import com.logilong.live.im.core.server.interfaces.dto.ImOnlineDTO;
 import com.logilong.live.im.dto.ImMsgBody;
-import com.logilong.live.im.router.interfaces.constants.ImMsgBizCodeEnum;
-import com.logilong.live.im.router.interfaces.rpc.ImRouterRpc;
+import com.logilong.live.im.router.constants.ImMsgBizCodeEnum;
+import com.logilong.live.im.router.interfaces.ImRouterRpc;
 import com.logilong.live.living.interfaces.constants.LivingRoomTypeEnum;
 import com.logilong.live.living.interfaces.dto.LivingPkRespDTO;
 import com.logilong.live.living.interfaces.dto.LivingRoomReqDTO;
@@ -49,8 +49,6 @@ public class LivingRoomServiceImpl implements ILivingRoomService {
     private RedisTemplate<String, Object> redisTemplate;
     @Resource
     private LivingProviderCacheKeyBuilder cacheKeyBuilder;
-    @Resource
-    private ILivingRoomTxService livingRoomTxService;
     @DubboReference
     private ImRouterRpc imRouterRpc;
 
