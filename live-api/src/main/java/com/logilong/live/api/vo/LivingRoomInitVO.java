@@ -10,6 +10,7 @@ public class  LivingRoomInitVO {
     private String anchorImg;
     private String roomName;
     private boolean isAnchor;
+    private String redPacketConfigCode;
     private String avatar;
     private Integer roomId;
     private String watcherNickName;

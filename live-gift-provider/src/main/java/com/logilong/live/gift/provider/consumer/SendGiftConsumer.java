@@ -107,7 +107,7 @@ public class SendGiftConsumer implements InitializingBean {
                         LivingRoomReqDTO reqDTO = new LivingRoomReqDTO();
                         reqDTO.setAppId(AppIdEnum.LIVE_BIZ.getCode());
                         reqDTO.setRoomId(sendGiftMq.getRoomId());
-                        List<Long> userIdList = livingRoomRpc.queryUserIdByRoomId(reqDTO);
+                        List<Long> userIdList = livingRoomRpc.queryUserIdsByRoomId(reqDTO);
                         this.batchSendImMsg(userIdList, ImMsgBizCodeEnum.LIVING_ROOM_SEND_GIFT_SUCCESS, jsonObject);
                     } else if (SendGiftTypeEnum.PK_SEND_GIFT.getCode().equals(sendGiftType)) {
                         this.pkImMsgSend(jsonObject, sendGiftMq, receiverId);
@@ -186,7 +186,7 @@ public class SendGiftConsumer implements InitializingBean {
         LivingRoomReqDTO livingRoomReqDTO = new LivingRoomReqDTO();
         livingRoomReqDTO.setRoomId(roomId);
         livingRoomReqDTO.setAppId(AppIdEnum.LIVE_BIZ.getCode());
-        List<Long> userIdList = livingRoomRpc.queryUserIdByRoomId(livingRoomReqDTO);
+        List<Long> userIdList = livingRoomRpc.queryUserIdsByRoomId(livingRoomReqDTO);
         this.batchSendImMsg(userIdList, ImMsgBizCodeEnum.LIVING_ROOM_PK_SEND_GIFT_SUCCESS, jsonObject);
     }
 

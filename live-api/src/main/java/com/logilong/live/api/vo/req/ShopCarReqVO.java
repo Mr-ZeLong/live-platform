@@ -3,7 +3,8 @@ package com.logilong.live.api.vo.req;
 import lombok.Data;
 
 @Data
-public class OnlinePkReqVO {
-
+public class ShopCarReqVO {
+    
+    private Long skuId;
     private Integer roomId;
 }

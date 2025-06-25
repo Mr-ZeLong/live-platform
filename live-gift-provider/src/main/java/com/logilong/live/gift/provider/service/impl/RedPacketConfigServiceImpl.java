@@ -22,18 +22,18 @@ import com.logilong.live.im.router.constants.ImMsgBizCodeEnum;
 import com.logilong.live.im.router.interfaces.ImRouterRpc;
 import com.logilong.live.living.interfaces.dto.LivingRoomReqDTO;
 import com.logilong.live.living.interfaces.rpc.ILivingRoomRpc;
+import org.apache.rocketmq.client.producer.MQProducer;
+import org.apache.rocketmq.client.producer.SendResult;
+import org.apache.rocketmq.common.message.Message;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.redis.core.RedisTemplate;
-import org.springframework.kafka.core.KafkaTemplate;
-import org.springframework.kafka.support.SendResult;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
-import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ThreadLocalRandom;
 import java.util.concurrent.TimeUnit;
 
@@ -48,14 +48,14 @@ public class RedPacketConfigServiceImpl implements IRedPacketConfigService {
     private RedisTemplate<String, Object> redisTemplate;
     @Resource
     private GiftProviderCacheKeyBuilder cacheKeyBuilder;
-    @Resource
-    private KafkaTemplate<String, String> kafkaTemplate;
     @DubboReference
     private ImRouterRpc routerRpc;
     @DubboReference
     private ILivingRoomRpc livingRoomRpc;
     @DubboReference
     private ILiveCurrencyAccountRpc liveCurrencyAccountRpc;
+    @Resource
+    private MQProducer mqProducer;
 
     @Override
     public RedPacketConfigPO queryByAnchorId(Long anchorId) {
@@ -163,20 +163,16 @@ public class RedPacketConfigServiceImpl implements IRedPacketConfigService {
         SendRedPacketBO sendRedPacketBO = new SendRedPacketBO();
         sendRedPacketBO.setPrice(price);
         sendRedPacketBO.setReqDTO(redPacketConfigReqDTO);
-        CompletableFuture<SendResult<String, String>> sendResult = kafkaTemplate.send(GiftProviderTopicNames.RECEIVE_RED_PACKET, JSON.toJSONString(sendRedPacketBO));
+        Message message = new Message();
+        message.setTopic(GiftProviderTopicNames.RECEIVE_RED_PACKET);
+        message.setBody(JSON.toJSONBytes(sendRedPacketBO));
         try {
-            sendResult.whenComplete((v, e) -> {
-                if (e == null) {
-                    LOGGER.info("[RedPacketConfigServiceImpl] user {} receive a redPacket, send success", redPacketConfigReqDTO.getUserId());
-                }
-            }).exceptionally(e -> {
-                LOGGER.error("[RedPacketConfigServiceImpl] send error, userId is {}, price is {}", redPacketConfigReqDTO.getUserId(), price);
-                throw new RuntimeException(e);
-            });
+            SendResult sendResult = mqProducer.send(message);
+            LOGGER.info("[RedPacketConfigServiceImpl] send result is {}", sendResult);
         } catch (Exception e) {
-            return new RedPacketReceiveDTO(null, "抱歉，红包被人抢走了，再试试");
+            LOGGER.info("[RedPacketConfigServiceImpl] send result is error:", e);
         }
-        return new RedPacketReceiveDTO(price, "恭喜领取到红包：" + price + "旗鱼币！");
+        return new RedPacketReceiveDTO(price, "恭喜领取到红包：" + price + "直播币！");
     }
 
     @Override
@@ -225,7 +221,7 @@ public class RedPacketConfigServiceImpl implements IRedPacketConfigService {
 
         userIdList.forEach(userId -> {
             ImMsgBody imMsgBody = new ImMsgBody();
-            imMsgBody.setAppId(AppIdEnum.QIYU_LIVE_BIZ.getCode());
+            imMsgBody.setAppId(AppIdEnum.LIVE_BIZ.getCode());
             imMsgBody.setBizCode(bizCode);
             imMsgBody.setData(jsonObject.toJSONString());
             imMsgBody.setUserId(userId);

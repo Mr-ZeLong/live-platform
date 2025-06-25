@@ -1,10 +1,11 @@
 package com.logilong.live.api.controller;
 
 import jakarta.annotation.Resource;
+import com.logilong.live.api.error.ApiErrorEnum;
 import com.logilong.live.api.service.ILivingRoomService;
 import com.logilong.live.api.vo.LivingRoomInitVO;
 import com.logilong.live.api.vo.req.LivingRoomReqVO;
-import com.logilong.live.api.vo.req.OnlinePkReqVO;
+import com.logilong.live.api.vo.req.OnlinePKReqVO;
 import com.logilong.live.common.interfaces.vo.WebResponseVO;
 import com.logilong.live.web.starter.config.RequestLimit;
 import com.logilong.live.web.starter.context.LiveRequestContext;
@@ -29,7 +30,7 @@ public class LivingRoomController {
         return WebResponseVO.success(livingRoomService.list(livingRoomReqVO));
     }
 
-    @RequestLimit(limit = 1, second = 10, msg = "开播请求过于频繁，请稍后再试")
+    @RequestLimit(limit = 1, second = 10, msg = "开播请求过于频繁，请稍后再试")//[10.4] 限流组件的实现
     @PostMapping("/startingLiving")
     public WebResponseVO startingLiving(Integer type) {
         ErrorAssert.isNotNull(type, BizBaseErrorEnum.PARAM_ERROR);
@@ -40,8 +41,8 @@ public class LivingRoomController {
     }
 
     @PostMapping("/onlinePk")
-    @RequestLimit(limit = 1,second = 3)
-    public WebResponseVO onlinePk(OnlinePkReqVO onlinePkReqVO) {
+    @RequestLimit(limit = 1, second = 3)
+    public WebResponseVO onlinePk(OnlinePKReqVO onlinePkReqVO) {
         ErrorAssert.isNotNull(onlinePkReqVO.getRoomId(), BizBaseErrorEnum.PARAM_ERROR);
         return WebResponseVO.success(livingRoomService.onlinePk(onlinePkReqVO));
     }
@@ -65,6 +66,39 @@ public class LivingRoomController {
     @PostMapping("/anchorConfig")
     public WebResponseVO anchorConfig(Integer roomId) {
         return WebResponseVO.success(livingRoomService.anchorConfig(LiveRequestContext.getUserId(), roomId));
+    }
+
+    /**
+     * 准备生成红包雨数据
+     *
+     * @return
+     */
+    @PostMapping("/prepareRedPacket")
+    @RequestLimit(limit = 1, second = 10, msg = "正在初始化中，请稍等")
+    public WebResponseVO prepareRedPacket(LivingRoomReqVO livingRoomReqVO) {
+        return WebResponseVO.success(livingRoomService.prepareRedPacket(LiveRequestContext.getUserId(), livingRoomReqVO.getRoomId()));
+    }
+
+    /**
+     * 开始红包雨活动，广播直播间用户，开始抢红包
+     *
+     * @return
+     */
+    @PostMapping("/startRedPacket")
+    @RequestLimit(limit = 1, second = 10, msg = "正在广播直播间用户，请稍等")
+    public WebResponseVO startRedPacket(Long userId, String code) {
+        return WebResponseVO.success(livingRoomService.startRedPacket(LiveRequestContext.getUserId(), code));
+    }
+
+    /**
+     * 领取红包
+     *
+     * @return
+     */
+    @RequestLimit(limit = 1, second = 1, msg = "")
+    @PostMapping("/receiveRedPacket")
+    public WebResponseVO receiveRedPacket(LivingRoomReqVO livingRoomReqVO) {
+        return WebResponseVO.success(livingRoomService.receiveRedPacket(LiveRequestContext.getUserId(), livingRoomReqVO.getRedPacketConfigCode()));
     }
 
 }

@@ -2,8 +2,9 @@ package com.logilong.live.api.service;
 
 import com.logilong.live.api.vo.LivingRoomInitVO;
 import com.logilong.live.api.vo.req.LivingRoomReqVO;
-import com.logilong.live.api.vo.req.OnlinePkReqVO;
+import com.logilong.live.api.vo.req.OnlinePKReqVO;
 import com.logilong.live.api.vo.resp.LivingRoomPageRespVO;
+import com.logilong.live.api.vo.resp.RedPacketReceiveVO;
 
 public interface ILivingRoomService {
 
@@ -29,7 +30,7 @@ public interface ILivingRoomService {
      * @param onlinePkReqVO
      * @return
      */
-    boolean onlinePk(OnlinePkReqVO onlinePkReqVO);
+    boolean onlinePk(OnlinePKReqVO onlinePkReqVO);
 
     /**
      * 关闭直播间
@@ -48,4 +49,18 @@ public interface ILivingRoomService {
      */
     LivingRoomInitVO anchorConfig(Long userId,Integer roomId);
 
+    /**
+     * 主播点击开始准备红包雨金额
+     */
+    Boolean prepareRedPacket(Long userId, Integer roomId);
+
+    /**
+     * 主播开始红包雨
+     */
+    Boolean startRedPacket(Long userId, String code);
+
+    /**
+     * 根据红包雨code领取红包
+     */
+    RedPacketReceiveVO receiveRedPacket(Long userId, String redPacketConfigCode);
 }

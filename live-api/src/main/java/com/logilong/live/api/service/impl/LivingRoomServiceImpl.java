@@ -1,18 +1,22 @@
 package com.logilong.live.api.service.impl;
 
+import com.logilong.live.api.vo.resp.RedPacketReceiveVO;
+import com.logilong.live.gift.dto.RedPacketConfigReqDTO;
+import com.logilong.live.gift.dto.RedPacketConfigRespDTO;
+import com.logilong.live.gift.dto.RedPacketReceiveDTO;
+import com.logilong.live.gift.interfaces.IRedPacketConfigRpc;
 import org.apache.dubbo.config.annotation.DubboReference;
 import com.logilong.live.api.error.ApiErrorEnum;
 import com.logilong.live.api.service.ILivingRoomService;
 
 import com.logilong.live.api.vo.LivingRoomInitVO;
 import com.logilong.live.api.vo.req.LivingRoomReqVO;
-import com.logilong.live.api.vo.req.OnlinePkReqVO;
+import com.logilong.live.api.vo.req.OnlinePKReqVO;
 import com.logilong.live.api.vo.resp.LivingRoomPageRespVO;
 import com.logilong.live.api.vo.resp.LivingRoomRespVO;
 import com.logilong.live.common.interfaces.dto.PageWrapper;
 import com.logilong.live.common.interfaces.utils.ConvertBeanUtils;
 import com.logilong.live.im.constants.AppIdEnum;
-import com.logilong.live.living.interfaces.constants.LivingRoomTypeEnum;
 import com.logilong.live.living.interfaces.dto.LivingPkRespDTO;
 import com.logilong.live.living.interfaces.dto.LivingRoomReqDTO;
 import com.logilong.live.living.interfaces.dto.LivingRoomRespDTO;
@@ -22,7 +26,6 @@ import com.logilong.live.user.interfaces.IUserRpc;
 import com.logilong.live.web.starter.context.LiveRequestContext;
 import com.logilong.live.web.starter.error.BizBaseErrorEnum;
 import com.logilong.live.web.starter.error.ErrorAssert;
-import com.logilong.live.web.starter.error.LiveBaseError;
 import com.logilong.live.web.starter.error.LiveErrorException;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
@@ -39,6 +42,8 @@ public class LivingRoomServiceImpl implements ILivingRoomService {
     private IUserRpc userRpc;
     @DubboReference
     private ILivingRoomRpc livingRoomRpc;
+    @DubboReference
+    private IRedPacketConfigRpc redPacketConfigRpc;
 
     @Override
     public LivingRoomPageRespVO list(LivingRoomReqVO livingRoomReqVO) {
@@ -62,11 +67,11 @@ public class LivingRoomServiceImpl implements ILivingRoomService {
     }
 
     @Override
-    public boolean onlinePk(OnlinePkReqVO onlinePkReqVO) {
+    public boolean onlinePk(OnlinePKReqVO onlinePkReqVO) {
         LivingRoomReqDTO reqDTO = ConvertBeanUtils.convert(onlinePkReqVO,LivingRoomReqDTO.class);
         reqDTO.setAppId(AppIdEnum.LIVE_BIZ.getCode());
         reqDTO.setPkObjId(LiveRequestContext.getUserId());
-        LivingPkRespDTO tryOnlineStatus = livingRoomRpc.onlinePk(reqDTO);
+        LivingPkRespDTO tryOnlineStatus = livingRoomRpc.onlinePK(reqDTO);
         ErrorAssert.isTure(tryOnlineStatus.isOnlineStatus(), new LiveErrorException(-1,tryOnlineStatus.getMsg()));
         return true;
     }
@@ -96,12 +101,57 @@ public class LivingRoomServiceImpl implements ILivingRoomService {
         if (respDTO == null || respDTO.getAnchorId() == null || userId == null) {
             //这种就是属于直播间已经不存在的情况了
             respVO.setRoomId(-1);
-        } else {
-            respVO.setRoomId(respDTO.getId());
-            respVO.setAnchorId(respDTO.getAnchorId());
-            respVO.setAnchor(respDTO.getAnchorId().equals(userId));
+            return respVO;
+        }
+
+        boolean isAuthor = respDTO.getAnchorId().equals(userId);
+        respVO.setRoomId(respDTO.getId());
+        respVO.setAnchorId(respDTO.getAnchorId());
+        respVO.setAnchor(isAuthor);
+
+        if (isAuthor) {
+            RedPacketConfigRespDTO redPacketConfigRespDTO = redPacketConfigRpc.queryByAnchorId(userId);
+            if (redPacketConfigRespDTO != null) {
+                respVO.setRedPacketConfigCode(redPacketConfigRespDTO.getConfigCode());
+            }
         }
         respVO.setDefaultBgImg("https://picst.sunbangyan.cn/2023/08/29/waxzj0.png");
+        return respVO;
+    }
+
+    @Override
+    public Boolean prepareRedPacket(Long userId, Integer roomId) {
+        LivingRoomRespDTO livingRoomRespDTO = livingRoomRpc.queryByRoomId(roomId);
+        ErrorAssert.isNotNull(livingRoomRespDTO, BizBaseErrorEnum.PARAM_ERROR);
+        ErrorAssert.isTure(userId.equals(livingRoomRespDTO.getAnchorId()), BizBaseErrorEnum.PARAM_ERROR);
+        return redPacketConfigRpc.prepareRedPacket(userId);
+    }
+
+    @Override
+    public Boolean startRedPacket(Long userId, String code) {
+        RedPacketConfigReqDTO reqDTO = new RedPacketConfigReqDTO();
+        reqDTO.setUserId(userId);
+        reqDTO.setRedPacketConfigCode(code);
+        LivingRoomRespDTO livingRoomRespDTO = livingRoomRpc.queryByAnchorId(userId);
+        ErrorAssert.isNotNull(livingRoomRespDTO, BizBaseErrorEnum.PARAM_ERROR);
+        reqDTO.setRoomId(livingRoomRespDTO.getId());
+        return redPacketConfigRpc.startRedPacket(reqDTO);
+    }
+
+
+    @Override
+    public RedPacketReceiveVO receiveRedPacket(Long userId, String code) {
+        RedPacketConfigReqDTO reqDTO = new RedPacketConfigReqDTO();
+        reqDTO.setUserId(userId);
+        reqDTO.setRedPacketConfigCode(code);
+        RedPacketReceiveDTO receiveDTO = redPacketConfigRpc.receiveRedPacket(reqDTO);
+        RedPacketReceiveVO respVO = new RedPacketReceiveVO();
+        if (receiveDTO == null) {
+            respVO.setMsg("红包已派发完毕");
+        } else {
+            respVO.setPrice(receiveDTO.getPrice());
+            respVO.setMsg(receiveDTO.getNotifyMsg());
+        }
         return respVO;
     }
 

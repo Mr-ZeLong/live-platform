@@ -8,7 +8,6 @@ import com.logilong.live.living.interfaces.dto.LivingRoomReqDTO;
 import com.logilong.live.living.interfaces.dto.LivingRoomRespDTO;
 import com.logilong.live.living.interfaces.rpc.ILivingRoomRpc;
 import com.logilong.live.living.provider.service.ILivingRoomService;
-import com.logilong.live.living.provider.service.ILivingRoomTxService;
 
 import java.util.List;
 
