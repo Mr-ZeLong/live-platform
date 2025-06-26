@@ -26,14 +26,17 @@ public class GiftProviderCacheKeyBuilder extends RedisKeyBuilder {
     private static final String SHOP_CAR = "shop_car";
     private static final String SKU_STOCK = "sku_stock";
     private static final String STOCK_SYNC_LOCK = "stock_sync_lock";
+    private static final String SKU_DETAIL = "sku_detail";
 
     public String buildStockSyncLock() {
         return super.getPrefix() + STOCK_SYNC_LOCK;
     }
 
+
     public String buildSkuStock(Long skuId) {
         return super.getPrefix() + SKU_STOCK + super.getSplitItem() + skuId;
     }
+
 
     public String buildUserShopCar(Long userId, Integer roomId) {
         return super.getPrefix() + SHOP_CAR + super.getSplitItem() + userId + super.getSplitItem() + roomId;
@@ -41,6 +44,10 @@ public class GiftProviderCacheKeyBuilder extends RedisKeyBuilder {
 
     public String buildSkuDetailInfoMap(Long anchorId) {
         return super.getPrefix() + SKU_DETAIL_INFO_MAP + super.getSplitItem() + anchorId;
+    }
+
+    public String buildSkuDetail(Long skuId) {
+        return super.getPrefix() + SKU_DETAIL + super.getSplitItem() + skuId;
     }
 
     public String buildLivingPkIsOver(Integer roomId) {
