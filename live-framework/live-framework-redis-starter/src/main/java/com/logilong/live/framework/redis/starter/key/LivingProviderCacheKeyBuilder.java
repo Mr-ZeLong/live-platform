@@ -3,6 +3,10 @@ package com.logilong.live.framework.redis.starter.key;
 import org.springframework.context.annotation.Conditional;
 import org.springframework.context.annotation.Configuration;
 
+
+/**
+ * 直播模块RedisKey构建
+ **/
 @Configuration
 @Conditional(RedisKeyLoadMatch.class)
 public class LivingProviderCacheKeyBuilder extends RedisKeyBuilder {

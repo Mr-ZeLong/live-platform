@@ -11,7 +11,6 @@ public enum MsgSendResultEnum {
     SEND_FAIL(1,"发送失败"),
     MSG_PARAM_ERROR(2,"消息参数异常");
 
-    final int code;
-    final String desc;
-
+    private final int code;
+    private final String desc;
 }

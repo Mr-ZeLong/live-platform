@@ -5,11 +5,7 @@ import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Update;
 import com.logilong.live.user.provider.dao.po.UserTagPO;
 
-/**
- * @Author idea
- * @Date: Created in 17:13 2023/5/27
- * @Description
- */
+
 @Mapper
 public interface IUserTagMapper extends BaseMapper<UserTagPO> {
 

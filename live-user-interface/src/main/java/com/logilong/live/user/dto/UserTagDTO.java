@@ -6,6 +6,7 @@ import java.io.Serial;
 import java.io.Serializable;
 import java.util.Date;
 
+
 @Data
 public class UserTagDTO implements Serializable {
 
@@ -17,5 +18,4 @@ public class UserTagDTO implements Serializable {
     private Long tagInfo03;
     private Date createTime;
     private Date updateTime;
-
 }

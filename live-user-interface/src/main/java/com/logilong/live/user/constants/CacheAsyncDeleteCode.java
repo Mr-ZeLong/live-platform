@@ -12,7 +12,7 @@ public enum CacheAsyncDeleteCode {
     USER_INFO_DELETE(0, "用户基础信息删除"),
     USER_TAG_DELETE(1, "用户标签删除");
 
-    final int code;
-    final String desc;
+    private final int code;
+    private final String desc;
 
 }

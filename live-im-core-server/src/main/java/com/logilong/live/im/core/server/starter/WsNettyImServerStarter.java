@@ -22,18 +22,14 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.core.env.Environment;
 import org.springframework.util.StringUtils;
 
-/**
- * @Author idea
- * @Date: Created in 20:35 2023/7/9
- * @Description
- */
+
 @Configuration
 public class WsNettyImServerStarter implements InitializingBean {
 
-    private static Logger LOGGER = LoggerFactory.getLogger(WsNettyImServerStarter.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(WsNettyImServerStarter.class);
 
     //指定监听的端口
-    @Value("${qiyu.im.ws.port}")
+    @Value("${live.im.ws.port}")
     private int port;
     @Resource
     private WsShakeHandler wsShakeHandler;
@@ -98,7 +94,7 @@ public class WsNettyImServerStarter implements InitializingBean {
                 }
             }
         });
-        nettyServerThread.setName("qiyu-live-im-server-ws");
+        nettyServerThread.setName("live-im-server-ws");
         nettyServerThread.start();
     }
 }

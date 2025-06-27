@@ -1,8 +1,11 @@
 package com.logilong.live.user.dto;
 
+import lombok.Data;
+
 import java.io.Serial;
 import java.io.Serializable;
 
+@Data
 public class UserLoginDTO implements Serializable {
     @Serial
     private static final long serialVersionUID = -4290788036479984698L;
@@ -10,30 +13,6 @@ public class UserLoginDTO implements Serializable {
     private boolean isLoginSuccess;
     private String desc;
     private Long userId;
-
-    public boolean isLoginSuccess() {
-        return isLoginSuccess;
-    }
-
-    public void setLoginSuccess(boolean loginSuccess) {
-        isLoginSuccess = loginSuccess;
-    }
-
-    public String getDesc() {
-        return desc;
-    }
-
-    public void setDesc(String desc) {
-        this.desc = desc;
-    }
-
-    public Long getUserId() {
-        return userId;
-    }
-
-    public void setUserId(Long userId) {
-        this.userId = userId;
-    }
 
     public static UserLoginDTO loginError(String desc) {
         UserLoginDTO userLoginDTO = new UserLoginDTO();
@@ -47,14 +26,5 @@ public class UserLoginDTO implements Serializable {
         userLoginDTO.setLoginSuccess(true);
         userLoginDTO.setUserId(userId);
         return userLoginDTO;
-    }
-
-    @Override
-    public String toString() {
-        return "UserLoginDTO{" +
-                "isLoginSuccess=" + isLoginSuccess +
-                ", desc='" + desc + '\'' +
-                ", userId=" + userId +
-                '}';
     }
 }

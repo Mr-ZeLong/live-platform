@@ -5,7 +5,7 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Configuration;
 
 
-@ConfigurationProperties(prefix = "rmq.consumer")
+@ConfigurationProperties(prefix = "live.rmq.consumer")
 @Configuration
 @Data
 public class RocketMQConsumerProperties {

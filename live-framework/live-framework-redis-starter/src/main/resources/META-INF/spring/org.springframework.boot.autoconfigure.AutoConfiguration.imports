@@ -7,3 +7,4 @@ com.logilong.live.framework.redis.starter.key.ImCoreServerProviderCacheKeyBuilde
 com.logilong.live.framework.redis.starter.key.LivingProviderCacheKeyBuilder
 com.logilong.live.framework.redis.starter.key.GiftProviderCacheKeyBuilder
 com.logilong.live.framework.redis.starter.key.BankProviderCacheKeyBuilder
+com.logilong.live.framework.redis.starter.key.SkuProviderCacheKeyBuilder

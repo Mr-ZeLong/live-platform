@@ -19,9 +19,9 @@ import com.logilong.live.gift.provider.service.IRedPacketConfigService;
 import com.logilong.live.im.constants.AppIdEnum;
 import com.logilong.live.im.dto.ImMsgBody;
 import com.logilong.live.im.router.constants.ImMsgBizCodeEnum;
-import com.logilong.live.im.router.interfaces.ImRouterRpc;
+import com.logilong.live.im.router.interfaces.ImRouterRPC;
 import com.logilong.live.living.interfaces.dto.LivingRoomReqDTO;
-import com.logilong.live.living.interfaces.rpc.ILivingRoomRpc;
+import com.logilong.live.living.interfaces.rpc.ILivingRoomRPC;
 import org.apache.rocketmq.client.producer.MQProducer;
 import org.apache.rocketmq.client.producer.SendResult;
 import org.apache.rocketmq.common.message.Message;
@@ -49,9 +49,9 @@ public class RedPacketConfigServiceImpl implements IRedPacketConfigService {
     @Resource
     private GiftProviderCacheKeyBuilder cacheKeyBuilder;
     @DubboReference
-    private ImRouterRpc routerRpc;
+    private ImRouterRPC routerRpc;
     @DubboReference
-    private ILivingRoomRpc livingRoomRpc;
+    private ILivingRoomRPC livingRoomRpc;
     @DubboReference
     private ILiveCurrencyAccountRpc liveCurrencyAccountRpc;
     @Resource

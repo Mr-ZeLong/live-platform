@@ -5,7 +5,7 @@ import org.apache.dubbo.config.annotation.DubboReference;
 import com.logilong.live.api.service.ImService;
 import com.logilong.live.api.vo.resp.ImConfigVO;
 import com.logilong.live.im.constants.AppIdEnum;
-import com.logilong.live.im.interfaces.ImTokenRpc;
+import com.logilong.live.im.interfaces.ImTokenRPC;
 import com.logilong.live.web.starter.context.LiveRequestContext;
 import org.springframework.cloud.client.ServiceInstance;
 import org.springframework.cloud.client.discovery.DiscoveryClient;
@@ -18,7 +18,7 @@ import java.util.List;
 public class ImServiceImpl implements ImService {
 
     @DubboReference
-    private ImTokenRpc imTokenRpc;
+    private ImTokenRPC imTokenRpc;
     @Resource
     private DiscoveryClient discoveryClient;
 

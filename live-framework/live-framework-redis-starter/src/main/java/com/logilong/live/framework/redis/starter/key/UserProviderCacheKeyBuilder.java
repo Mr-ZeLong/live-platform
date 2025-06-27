@@ -1,9 +1,11 @@
 package com.logilong.live.framework.redis.starter.key;
 
-
 import org.springframework.context.annotation.Conditional;
 import org.springframework.context.annotation.Configuration;
 
+/**
+ * 用户中台模块RedisKey构建
+ **/
 
 @Configuration
 @Conditional(RedisKeyLoadMatch.class)

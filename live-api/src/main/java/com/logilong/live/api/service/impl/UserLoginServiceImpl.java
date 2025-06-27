@@ -11,9 +11,9 @@ import com.logilong.live.common.interfaces.utils.ConvertBeanUtils;
 import com.logilong.live.common.interfaces.vo.WebResponseVO;
 import com.logilong.live.msg.dto.MsgCheckDTO;
 import com.logilong.live.msg.enums.MsgSendResultEnum;
-import com.logilong.live.msg.interfaces.ISmsRpc;
+import com.logilong.live.msg.interfaces.ISmsRPC;
 import com.logilong.live.user.dto.UserLoginDTO;
-import com.logilong.live.user.interfaces.IUserPhoneRpc;
+import com.logilong.live.user.interfaces.IUserPhoneRPC;
 import com.logilong.live.web.starter.error.ErrorAssert;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -29,9 +29,9 @@ public class UserLoginServiceImpl implements IUserLoginService {
     private static final Logger LOGGER = LoggerFactory.getLogger(UserLoginServiceImpl.class);
 
     @DubboReference
-    private ISmsRpc smsRpc;
+    private ISmsRPC smsRpc;
     @DubboReference
-    private IUserPhoneRpc userPhoneRPC;
+    private IUserPhoneRPC userPhoneRPC;
     @DubboReference
     private IAccountTokenRPC accountTokenRPC;
 
@@ -60,10 +60,10 @@ public class UserLoginServiceImpl implements IUserLoginService {
         ErrorAssert.isTure(userLoginDTO.isLoginSuccess(),ApiErrorEnum.USER_LOGIN_ERROR);
 
         String token = accountTokenRPC.createAndSaveLoginToken(userLoginDTO.getUserId());
-        Cookie cookie = new Cookie("qytk", token);
+        Cookie cookie = new Cookie("livetk", token);
         //http://app.qiyu.live.com/html/qiyu_live_list_room.html
         //http://api.qiyu.live.com/live/api/userLogin/sendLoginCode
-        cookie.setDomain("qiyu.live.com");
+        cookie.setDomain("live.com");
         cookie.setPath("/");
         //cookie有效期，一般他的默认单位是秒
         cookie.setMaxAge(30 * 24 * 3600);

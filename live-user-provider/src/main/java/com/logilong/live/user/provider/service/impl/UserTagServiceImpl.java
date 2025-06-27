@@ -16,9 +16,6 @@ import com.logilong.live.user.provider.dao.mapper.IUserTagMapper;
 import com.logilong.live.user.provider.dao.po.UserTagPO;
 import com.logilong.live.user.provider.service.IUserTagService;
 import com.logilong.live.user.utils.TagInfoUtils;
-
-import org.springframework.dao.DataAccessException;
-import org.springframework.data.redis.connection.RedisConnection;
 import org.springframework.data.redis.core.RedisCallback;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.serializer.RedisSerializer;
@@ -31,7 +28,7 @@ import java.util.concurrent.TimeUnit;
 
 
 @Service
-public class UserTagServiceImpl implements IUserTagService{
+public class UserTagServiceImpl implements IUserTagService {
 
     @Resource
     private IUserTagMapper userTagMapper;
@@ -50,17 +47,15 @@ public class UserTagServiceImpl implements IUserTagService{
             return true;
         }
         String setNxKey = cacheKeyBuilder.buildTagLockKey(userId);
-        String setNxResult = redisTemplate.execute(new RedisCallback<String>() {
-            @Override
-            public String doInRedis(RedisConnection connection) throws DataAccessException {
-                RedisSerializer keySerializer = redisTemplate.getKeySerializer();
-                RedisSerializer valueSerializer = redisTemplate.getValueSerializer();
-                return (String) connection.execute("set", keySerializer.serialize(setNxKey),
-                        valueSerializer.serialize("-1"),
-                        "NX".getBytes(StandardCharsets.UTF_8),
-                        "EX".getBytes(StandardCharsets.UTF_8),
-                        "3".getBytes(StandardCharsets.UTF_8));
-            }
+        // [5.7] 分布式并发场景下用户标签接口的优化以及初始化问题
+        String setNxResult = redisTemplate.execute((RedisCallback<String>) connection -> {
+            RedisSerializer keySerializer = redisTemplate.getKeySerializer();
+            RedisSerializer valueSerializer = redisTemplate.getValueSerializer();
+            return (String) connection.execute("set", keySerializer.serialize(setNxKey),
+                    valueSerializer.serialize("-1"),
+                    "NX".getBytes(StandardCharsets.UTF_8),
+                    "EX".getBytes(StandardCharsets.UTF_8),
+                    "3".getBytes(StandardCharsets.UTF_8));
         });
         if (!"OK".equals(setNxResult)) {
             return false;
@@ -140,6 +135,7 @@ public class UserTagServiceImpl implements IUserTagService{
      */
     private UserTagDTO queryByUserIdFromRedis(Long userId) {
         String redisKey = cacheKeyBuilder.buildTagKey(userId);
+        // [5.8] 用户标签引入Redis缓存
         UserTagDTO userTagDTO = redisTemplate.opsForValue().get(redisKey);
         if (userTagDTO != null) {
             return userTagDTO;

@@ -10,11 +10,10 @@ public class WebsocketEncoder extends ChannelOutboundHandlerAdapter {
 
     @Override
     public void write(ChannelHandlerContext ctx, Object msg, ChannelPromise promise) throws Exception {
-        if (!(msg instanceof ImMsg)) {
+        if (!(msg instanceof ImMsg imMsg)) {
             super.write(ctx, msg, promise);
             return;
         }
-        ImMsg imMsg = (ImMsg) msg;
         ctx.channel().writeAndFlush(new TextWebSocketFrame(JSON.toJSONString(imMsg)));
     }
 }

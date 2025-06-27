@@ -22,15 +22,28 @@ import org.springframework.util.StringUtils;
 @Configuration
 public class TcpNettyImServerStarter implements InitializingBean {
 
-    private static Logger LOGGER = LoggerFactory.getLogger(TcpNettyImServerStarter.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(TcpNettyImServerStarter.class);
 
     //指定监听的端口
-    @Value("${qiyu.im.tcp.port}")
+    @Value("${live.im.tcp.port}")
     private int port;
     @Resource
     private TcpImServerCoreHandler imServerCoreHandler;
     @Resource
     private Environment environment;
+
+    @Override
+    public void afterPropertiesSet() throws Exception {
+        Thread nettyServerThread = new Thread(() -> {
+            try {
+                startApplication();
+            } catch (InterruptedException e) {
+                throw new RuntimeException(e);
+            }
+        });
+        nettyServerThread.setName("live-im-server-tcp");
+        nettyServerThread.start();
+    }
 
     //基于netty去启动一个java进程，绑定监听的端口
     public void startApplication() throws InterruptedException {
@@ -70,21 +83,5 @@ public class TcpNettyImServerStarter implements InitializingBean {
         LOGGER.info("服务启动成功，监听端口为{}", port);
         //这里会阻塞掉主线程，实现服务长期开启的效果
         channelFuture.channel().closeFuture().sync();
-    }
-
-    @Override
-    public void afterPropertiesSet() throws Exception {
-        Thread nettyServerThread = new Thread(new Runnable() {
-            @Override
-            public void run() {
-                try {
-                    startApplication();
-                } catch (InterruptedException e) {
-                    throw new RuntimeException(e);
-                }
-            }
-        });
-        nettyServerThread.setName("qiyu-live-im-server-tcp");
-        nettyServerThread.start();
     }
 }

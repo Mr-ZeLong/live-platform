@@ -21,18 +21,16 @@ import org.springframework.data.redis.core.SessionCallback;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.ThreadLocalRandom;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
 
-/**
- * @Author idea
- * @Date: Created in 16:40 2023/5/12
- * @Description
- */
 @Service
 public class UserServiceImpl implements IUserService {
 
@@ -43,7 +41,7 @@ public class UserServiceImpl implements IUserService {
     @Resource
     private UserProviderCacheKeyBuilder cacheKeyBuilder;
     @Resource
-    private MQProducer mqProducer;
+    MQProducer mqProducer;
 
     @Override
     public UserDTO getByUserId(Long userId) {
@@ -73,8 +71,8 @@ public class UserServiceImpl implements IUserService {
             redisTemplate.delete(key);
             UserCacheAsyncDeleteDTO userCacheAsyncDeleteDTO = new UserCacheAsyncDeleteDTO();
             userCacheAsyncDeleteDTO.setCode(CacheAsyncDeleteCode.USER_INFO_DELETE.getCode());
-            Map<String,Object> jsonParam = new HashMap<>();
-            jsonParam.put("userId",userDTO.getUserId());
+            Map<String, Object> jsonParam = new HashMap<>();
+            jsonParam.put("userId", userDTO.getUserId());
             userCacheAsyncDeleteDTO.setJson(JSON.toJSONString(jsonParam));
             Message message = new Message();
             message.setTopic(UserProviderTopicNames.CACHE_ASYNC_DELETE_TOPIC);
@@ -123,13 +121,14 @@ public class UserServiceImpl implements IUserService {
         Map<Long, List<Long>> userIdMap = userIdNotInCacheList.stream().collect(Collectors.groupingBy(userId -> userId % 100));
         List<UserDTO> dbQueryResult = new CopyOnWriteArrayList<>();
         userIdMap.values().parallelStream().forEach(queryUserIdList -> {
-            dbQueryResult.addAll(ConvertBeanUtils.convertList(userMapper.selectBatchIds(queryUserIdList), UserDTO.class));
+            List<UserPO> userPOList = userMapper.selectBatchIds(queryUserIdList);
+            dbQueryResult.addAll(ConvertBeanUtils.convertList(userPOList, UserDTO.class));
         });
         if (!CollectionUtils.isEmpty(dbQueryResult)) {
             Map<String, UserDTO> saveCacheMap = dbQueryResult.stream().collect(Collectors.toMap(userDto -> cacheKeyBuilder.buildUserInfoKey(userDto.getUserId()), x -> x));
             redisTemplate.opsForValue().multiSet(saveCacheMap);
             //对命令执行批量过期设置操作
-            redisTemplate.executePipelined(new SessionCallback<Object>() {
+            redisTemplate.executePipelined(new SessionCallback<>() {
                 @Override
                 public <K, V> Object execute(RedisOperations<K, V> operations) throws DataAccessException {
                     for (String redisKey : saveCacheMap.keySet()) {
@@ -145,7 +144,6 @@ public class UserServiceImpl implements IUserService {
 
     /**
      * 创建随机的过期时间 用于redis设置key过期
-     *
      * @return
      */
     private int createRandomTime() {

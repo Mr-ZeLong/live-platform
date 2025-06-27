@@ -24,6 +24,7 @@ public class RequestLimitInterceptor implements HandlerInterceptor {
 
     @Resource
     private RedisTemplate<String, Object> redisTemplate;
+
     @Value("${spring.application.name}")
     private String applicationName;
 

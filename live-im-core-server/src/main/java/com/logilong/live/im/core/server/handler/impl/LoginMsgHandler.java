@@ -17,7 +17,7 @@ import com.logilong.live.im.core.server.handler.SimplyHandler;
 import com.logilong.live.im.core.server.interfaces.constants.ImCoreServerConstants;
 import com.logilong.live.im.core.server.interfaces.dto.ImOnlineDTO;
 import com.logilong.live.im.dto.ImMsgBody;
-import com.logilong.live.im.interfaces.ImTokenRpc;
+import com.logilong.live.im.interfaces.ImTokenRPC;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.redis.core.StringRedisTemplate;
@@ -35,7 +35,7 @@ public class LoginMsgHandler implements SimplyHandler {
     private static final Logger LOGGER = LoggerFactory.getLogger(LoginMsgHandler.class);
 
     @DubboReference
-    private ImTokenRpc imTokenRpc;
+    private ImTokenRPC imTokenRPC;
     @Resource
     private StringRedisTemplate stringRedisTemplate;
     @Resource
@@ -62,7 +62,7 @@ public class LoginMsgHandler implements SimplyHandler {
             LOGGER.error("param error,imMsg is {}", imMsg);
             throw new IllegalArgumentException("param error");
         }
-        Long userId = imTokenRpc.getUserIdByToken(token);
+        Long userId = imTokenRPC.getUserIdByToken(token);
         //token校验成功，而且和传递过来的userId是同一个，则允许建立连接
         if (userId != null && userId.equals(userIdFromMsg)) {
             loginSuccessHandler(ctx, userId, appId, null);
@@ -74,10 +74,32 @@ public class LoginMsgHandler implements SimplyHandler {
     }
 
     /**
+     * 如果用户登录成功则处理相关记录
+     */
+    public void loginSuccessHandler(ChannelHandlerContext ctx, Long userId, Integer appId, Integer roomId) {
+        //按照userId保存好相关的channel对象信息
+        ChannelHandlerContextCache.put(userId, ctx);
+        ImContextUtils.setUserId(ctx, userId);
+        ImContextUtils.setAppId(ctx, appId);
+        if (roomId != null) {
+            ImContextUtils.setRoomId(ctx, roomId);
+        }
+        //将im消息回写给客户端
+        ImMsgBody respBody = new ImMsgBody();
+        respBody.setAppId(appId);
+        respBody.setUserId(userId);
+        respBody.setData("im-core-server 用户im登录成功，返回的响应");
+        ImMsg respMsg = ImMsg.build(ImMsgCodeEnum.IM_LOGIN_MSG.getCode(), JSON.toJSONString(respBody));
+        stringRedisTemplate.opsForValue().set(ImCoreServerConstants.IM_BIND_IP_KEY + appId + ":" + userId,
+                ChannelHandlerContextCache.getServerIpAddress() + "%" + userId,
+                ImConstants.DEFAULT_HEART_BEAT_GAP * 2, TimeUnit.SECONDS);
+        LOGGER.info("[LoginMsgHandler] login success,userId is {},appId is {}", userId, appId);
+        ctx.writeAndFlush(respMsg);
+        sendLoginMQ(userId, appId, roomId);
+    }
+
+    /**
      * 用户登录的时候发送mq消息
-     *
-     * @param userId
-     * @param appId
      */
     private void sendLoginMQ(Long userId, Integer appId, Integer roomId) {
         ImOnlineDTO imOnlineDTO = new ImOnlineDTO();
@@ -94,34 +116,5 @@ public class LoginMsgHandler implements SimplyHandler {
         } catch (Exception e) {
             LOGGER.error("[sendLoginMQ] error is: ", e);
         }
-    }
-
-    /**
-     * 如果用户登录成功则处理相关记录
-     *
-     * @param ctx
-     * @param userId
-     * @param appId
-     */
-    public void loginSuccessHandler(ChannelHandlerContext ctx, Long userId, Integer appId, Integer roomId) {
-        //按照userId保存好相关的channel对象信息
-        ChannelHandlerContextCache.put(userId, ctx);
-        ImContextUtils.setUserId(ctx, userId);
-        ImContextUtils.setAppId(ctx, appId);
-        if (roomId != null) {
-            ImContextUtils.setRoomId(ctx, roomId);
-        }
-        //将im消息回写给客户端
-        ImMsgBody respBody = new ImMsgBody();
-        respBody.setAppId(appId);
-        respBody.setUserId(userId);
-        respBody.setData("true");
-        ImMsg respMsg = ImMsg.build(ImMsgCodeEnum.IM_LOGIN_MSG.getCode(), JSON.toJSONString(respBody));
-        stringRedisTemplate.opsForValue().set(ImCoreServerConstants.IM_BIND_IP_KEY + appId + ":" + userId,
-                ChannelHandlerContextCache.getServerIpAddress() + "%" + userId,
-                ImConstants.DEFAULT_HEART_BEAT_GAP * 2, TimeUnit.SECONDS);
-        LOGGER.info("[LoginMsgHandler] login success,userId is {},appId is {}", userId, appId);
-        ctx.writeAndFlush(respMsg);
-        sendLoginMQ(userId, appId, roomId);
     }
 }

@@ -1,11 +1,14 @@
 package com.logilong.live.framework.redis.starter.key;
 
-import org.springframework.beans.factory.annotation.Configurable;
 import org.springframework.context.annotation.Conditional;
+import org.springframework.context.annotation.Configuration;
 
-@Configurable
+/**
+ * 登录码缓存
+ **/
+@Configuration
 @Conditional(RedisKeyLoadMatch.class)
-public class MsgProviderCacheKeyBuilder extends RedisKeyBuilder{
+public class MsgProviderCacheKeyBuilder extends RedisKeyBuilder {
 
     private static final String SMS_LOGIN_CODE_KEY = "smsLoginCode";
 

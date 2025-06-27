@@ -13,6 +13,9 @@ import org.slf4j.LoggerFactory;
 
 import java.util.Properties;
 
+/**
+ * 通过SPI方式，自定义NacosDriverURLProvider解析器，实现shardingjdbc从nacos中获取配置信息
+ */
 
 public class NacosDriverURLProvider implements ShardingSphereDriverURLProvider {
 
@@ -42,22 +45,35 @@ public class NacosDriverURLProvider implements ShardingSphereDriverURLProvider {
         }
         // 得到例如：live-server:8848:live-user-shardingjdbc.yaml?username=nacos&&password=nacos&&namespace=live-test 格式的url
         String nacosUrl = url.substring(url.lastIndexOf(NACOS_TYPE) + NACOS_TYPE.length());
-        /**
+        /*
          * 得到三个字符串，分别是：
          * live-server
          * 8848
          * live-user-shardingjdbc.yaml
          */
-        String nacosStr[] = nacosUrl.split(":");
+        String[] nacosStr = nacosUrl.split(":");
         String nacosFileStr = nacosStr[2];
-        /**
+        /*
          * 得到两个字符串
          * live-user-shardingjdbc.yaml
          * username=nacos&&password=nacos&&namespace=live-test
          */
-        String nacosFileProp[] = nacosFileStr.split("\\?");
+        String[] nacosFileProp = nacosFileStr.split("\\?");
         String dataId = nacosFileProp[0];
-        String acceptProp[] = nacosFileProp[1].split("&&");
+        Properties properties = getProperties(nacosFileProp, nacosStr);
+        ConfigService configService = null;
+        try {
+            configService = NacosFactory.createConfigService(properties);
+            String content = configService.getConfig(dataId, GROUP, 6000);
+            logger.info(content);
+            return content.getBytes();
+        } catch (NacosException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    private static Properties getProperties(String[] nacosFileProp, String[] nacosStr) {
+        String[] acceptProp = nacosFileProp[1].split("&&");
         //这里获取到
         Properties properties = new Properties();
         properties.setProperty(PropertyKeyConst.SERVER_ADDR, nacosStr[0] + ":" + nacosStr[1]);
@@ -73,15 +89,7 @@ public class NacosDriverURLProvider implements ShardingSphereDriverURLProvider {
                 properties.setProperty(PropertyKeyConst.NAMESPACE, value);
             }
         }
-        ConfigService configService = null;
-        try {
-            configService = NacosFactory.createConfigService(properties);
-            String content = configService.getConfig(dataId, GROUP, 6000);
-            logger.info(content);
-            return content.getBytes();
-        } catch (NacosException e) {
-            throw new RuntimeException(e);
-        }
+        return properties;
     }
 
 }

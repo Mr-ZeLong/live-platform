@@ -15,7 +15,7 @@ public class ImOnlineServiceImpl implements ImOnlineService {
 
     @Override
     public boolean isOnline(long userId, int appId) {
-        return redisTemplate.hasKey(ImCoreServerConstants.IM_BIND_IP_KEY + appId + ":" + userId);
+        return Boolean.TRUE.equals(redisTemplate.hasKey(ImCoreServerConstants.IM_BIND_IP_KEY + appId + ":" + userId));
     }
 
 }

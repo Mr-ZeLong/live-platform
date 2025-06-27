@@ -17,9 +17,6 @@ import org.springframework.stereotype.Component;
  */
 @Component
 public class AckImMsgHandler implements SimplyHandler {
-
-    private static final Logger LOGGER = LoggerFactory.getLogger(AckImMsgHandler.class);
-
     @Resource
     private IMsgAckCheckService msgAckCheckService;
 

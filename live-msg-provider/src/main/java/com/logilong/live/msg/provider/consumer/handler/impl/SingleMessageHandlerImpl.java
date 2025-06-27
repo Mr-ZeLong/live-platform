@@ -4,9 +4,9 @@ import com.alibaba.fastjson.JSON;
 import org.apache.dubbo.config.annotation.DubboReference;
 import com.logilong.live.im.constants.AppIdEnum;
 import com.logilong.live.im.dto.ImMsgBody;
-import com.logilong.live.im.router.interfaces.ImRouterRpc;
+import com.logilong.live.im.router.interfaces.ImRouterRPC;
 import com.logilong.live.living.interfaces.dto.LivingRoomReqDTO;
-import com.logilong.live.living.interfaces.rpc.ILivingRoomRpc;
+import com.logilong.live.living.interfaces.rpc.ILivingRoomRPC;
 import com.logilong.live.msg.dto.MessageDTO;
 import com.logilong.live.im.router.constants.ImMsgBizCodeEnum;
 import com.logilong.live.msg.provider.consumer.handler.MessageHandler;
@@ -21,9 +21,9 @@ import java.util.stream.Collectors;
 public class SingleMessageHandlerImpl implements MessageHandler {
 
     @DubboReference
-    private ImRouterRpc routerRpc;
+    private ImRouterRPC routerRPC;
     @DubboReference
-    private ILivingRoomRpc livingRoomRpc;
+    private ILivingRoomRPC livingRoomRPC;
 
 
     @Override
@@ -40,7 +40,7 @@ public class SingleMessageHandlerImpl implements MessageHandler {
             reqDTO.setRoomId(roomId);
             reqDTO.setAppId(imMsgBody.getAppId());
             //自己不用发
-            List<Long> userIdList = livingRoomRpc.queryUserIdByRoomId(reqDTO).stream().filter(x->!x.equals(imMsgBody.getUserId())).collect(Collectors.toList());
+            List<Long> userIdList = livingRoomRPC.queryUserIdsByRoomId(reqDTO).stream().filter(x->!x.equals(imMsgBody.getUserId())).toList();
             if(CollectionUtils.isEmpty(userIdList)) {
                 return;
             }
@@ -54,7 +54,7 @@ public class SingleMessageHandlerImpl implements MessageHandler {
                 imMsgBodies.add(respMsg);
             });
             //暂时不做过多的处理
-            routerRpc.batchSendMsg(imMsgBodies);
+            routerRPC.batchSendMsg(imMsgBodies);
         }
     }
 }

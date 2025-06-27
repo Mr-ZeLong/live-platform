@@ -5,13 +5,8 @@ import com.logilong.live.user.dto.UserDTO;
 import java.util.List;
 import java.util.Map;
 
-/**
- * @Author idea
- * @Date: Created in 16:40 2023/5/12
- * @Description
- */
-public interface IUserService {
 
+public interface IUserService {
     /**
      * 根据用户id进行查询
      *

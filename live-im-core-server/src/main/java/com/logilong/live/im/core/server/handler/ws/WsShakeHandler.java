@@ -7,9 +7,11 @@ import io.netty.channel.ChannelInboundHandlerAdapter;
 import io.netty.handler.codec.http.FullHttpRequest;
 import io.netty.handler.codec.http.websocketx.*;
 import jakarta.annotation.Resource;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
 import org.apache.dubbo.config.annotation.DubboReference;
 import com.logilong.live.im.core.server.handler.impl.LoginMsgHandler;
-import com.logilong.live.im.interfaces.ImTokenRpc;
+import com.logilong.live.im.interfaces.ImTokenRPC;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
@@ -25,12 +27,12 @@ public class WsShakeHandler extends ChannelInboundHandlerAdapter {
     private static final Logger LOGGER = LoggerFactory.getLogger(WsShakeHandler.class);
 
     //指定监听的端口
-    @Value("${im.ws.port}")
+    @Value("${live.im.ws.port}")
     private int port;
     @Value("${spring.cloud.nacos.discovery.ip}")
     private String serverIp;
     @DubboReference
-    private ImTokenRpc imTokenRpc;
+    private ImTokenRPC imTokenRpc;
     @Resource
     private LoginMsgHandler loginMsgHandler;
 
@@ -95,23 +97,11 @@ public class WsShakeHandler extends ChannelInboundHandlerAdapter {
         }
     }
 
+    @Getter
+    @AllArgsConstructor
     enum ParamCodeEnum {
         LIVING_ROOM_LOGIN(1001, "直播间登录");
-
-        int code;
-        String desc;
-
-        ParamCodeEnum(int code, String desc) {
-            this.code = code;
-            this.desc = desc;
-        }
-
-        public int getCode() {
-            return code;
-        }
-
-        public String getDesc() {
-            return desc;
-        }
+        private final int code;
+        private final String desc;
     }
 }

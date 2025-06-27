@@ -5,6 +5,7 @@ import jakarta.annotation.Resource;
 import org.apache.rocketmq.client.consumer.DefaultMQPushConsumer;
 import org.apache.rocketmq.client.consumer.listener.ConsumeConcurrentlyStatus;
 import org.apache.rocketmq.client.consumer.listener.MessageListenerConcurrently;
+import org.apache.rocketmq.client.exception.MQClientException;
 import org.apache.rocketmq.common.consumer.ConsumeFromWhere;
 import org.apache.rocketmq.common.message.MessageExt;
 import com.logilong.live.common.interfaces.topic.ImCoreServerProviderTopicNames;
@@ -32,6 +33,10 @@ public class ImMsgConsumer implements InitializingBean {
     // A--》B im-core-server -> msg-provider(持久化) -> im-core-server -> 通知到b
     @Override
     public void afterPropertiesSet() throws Exception {
+        initConsumer();
+    }
+
+    private void initConsumer() throws Exception {
         DefaultMQPushConsumer mqPushConsumer = new DefaultMQPushConsumer();
         //老版本中会开启，新版本的mq不需要使用到
         mqPushConsumer.setVipChannelEnabled(false);

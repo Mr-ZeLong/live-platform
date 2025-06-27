@@ -20,11 +20,11 @@ public class RouterHandlerServiceImpl implements IRouterHandlerService {
     private IMsgAckCheckService msgAckCheckService;
 
     @Override
-    public void onReceive(ImMsgBody imMsgBody) {
+    public void onReceive(ImMsgBody imMsgBody, int times) {
         //需要进行消息通知的userid
         if(sendMsgToClient(imMsgBody)) {
             //当im服务器推送了消息给到客户端，然后我们需要记录下ack
-            msgAckCheckService.recordMsgAck(imMsgBody, 1);
+            msgAckCheckService.recordMsgAck(imMsgBody, times);
             msgAckCheckService.sendDelayMsg(imMsgBody);
         }
     }

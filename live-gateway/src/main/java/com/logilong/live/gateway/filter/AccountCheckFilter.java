@@ -7,6 +7,7 @@ import com.logilong.live.common.interfaces.enums.GatewayHeaderEnum;
 import com.logilong.live.gateway.properties.GatewayApplicationProperties;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cloud.gateway.filter.GatewayFilterChain;
 import org.springframework.cloud.gateway.filter.GlobalFilter;
 import org.springframework.core.Ordered;
@@ -36,14 +37,20 @@ public class AccountCheckFilter implements GlobalFilter, Ordered {
     @Resource
     private GatewayApplicationProperties gatewayApplicationProperties;
 
+    @Value("${live.http.headers.ACCESS_CONTROL_ALLOW_ORIGIN}")
+    private String ACCESS_CONTROL_ALLOW_ORIGIN;
+
     @Override
     public Mono<Void> filter(ServerWebExchange exchange, GatewayFilterChain chain) {
-        //获取请求url，判断是否为空，如果为空则返回请求不通过
+        // 获取请求url，判断是否为空，如果为空则返回请求不通过
         ServerHttpRequest request = exchange.getRequest();
         String reqUrl = request.getURI().getPath();
+        // 允许跨域请求（和api模块中地loginserviceimpl中的一样，设置了域名才加这个，我这里无法解决跨域就没有设置域名）
         ServerHttpResponse response = exchange.getResponse();
         HttpHeaders headers = response.getHeaders();
-        headers.add(HttpHeaders.ACCESS_CONTROL_ALLOW_ORIGIN, "http://web.qiyu.live.com:5500");
+        // headers.add(HttpHeaders.ACCESS_CONTROL_ALLOW_ORIGIN, "http://web.live.com:5500");
+        // 这里我们不设置域名，就设置为localhost
+        headers.add(HttpHeaders.ACCESS_CONTROL_ALLOW_ORIGIN, this.ACCESS_CONTROL_ALLOW_ORIGIN);
         headers.add(HttpHeaders.ACCESS_CONTROL_ALLOW_METHODS, "POST, GET");
         headers.add(HttpHeaders.ACCESS_CONTROL_ALLOW_CREDENTIALS, "true");
         headers.add(HttpHeaders.ACCESS_CONTROL_ALLOW_HEADERS, "*");
@@ -63,18 +70,18 @@ public class AccountCheckFilter implements GlobalFilter, Ordered {
             }
         }
         //如果不存在url白名单，那么就需要提取cookie，并且对cookie做基本的格式校验
-        List<HttpCookie> httpCookieList = request.getCookies().get("qytk");
+        List<HttpCookie> httpCookieList = request.getCookies().get("livetk");
         if (CollectionUtils.isEmpty(httpCookieList)) {
-            LOGGER.error("请求没有检索到qytk的cookie，被拦截");
+            LOGGER.error("请求没有检索到livetk的cookie，被拦截");
             return Mono.empty();
         }
-        String qiyuTokenCookieValue = httpCookieList.get(0).getValue();
-        if (StringUtils.isEmpty(qiyuTokenCookieValue) || StringUtils.isEmpty(qiyuTokenCookieValue.trim())) {
-            LOGGER.error("请求的cookie中的qytk是空，被拦截");
+        String liveTokenCookieValue = httpCookieList.get(0).getValue();
+        if (StringUtils.isEmpty(liveTokenCookieValue) || StringUtils.isEmpty(liveTokenCookieValue.trim())) {
+            LOGGER.error("请求的cookie中的livetk是空，被拦截");
             return Mono.empty();
         }
         //token获取到之后，调用rpc判断token是否合法，如果合法则吧token换取到的userId传递给到下游
-        Long userId = accountTokenRPC.getUserIdByToken(qiyuTokenCookieValue);
+        Long userId = accountTokenRPC.getUserIdByToken(liveTokenCookieValue);
         //如果token不合法，则拦截请求，日志记录token失效
         if (userId == null) {
             LOGGER.error("请求的token失效了，被拦截");

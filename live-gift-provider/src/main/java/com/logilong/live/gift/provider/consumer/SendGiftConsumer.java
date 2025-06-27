@@ -20,10 +20,10 @@ import com.logilong.live.gift.constants.SendGiftTypeEnum;
 import com.logilong.live.im.constants.AppIdEnum;
 import com.logilong.live.im.dto.ImMsgBody;
 import com.logilong.live.im.router.constants.ImMsgBizCodeEnum;
-import com.logilong.live.im.router.interfaces.ImRouterRpc;
+import com.logilong.live.im.router.interfaces.ImRouterRPC;
 import com.logilong.live.living.interfaces.dto.LivingRoomReqDTO;
 import com.logilong.live.living.interfaces.dto.LivingRoomRespDTO;
-import com.logilong.live.living.interfaces.rpc.ILivingRoomRpc;
+import com.logilong.live.living.interfaces.rpc.ILivingRoomRPC;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.InitializingBean;
@@ -67,9 +67,9 @@ public class SendGiftConsumer implements InitializingBean {
     @DubboReference
     private ILiveCurrencyAccountRpc liveCurrencyAccountRpc;
     @DubboReference
-    private ILivingRoomRpc livingRoomRpc;
+    private ILivingRoomRPC livingRoomRpc;
     @DubboReference
-    private ImRouterRpc routerRpc;
+    private ImRouterRPC routerRpc;
 
     @Override
     public void afterPropertiesSet() throws Exception {

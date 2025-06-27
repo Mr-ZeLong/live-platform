@@ -4,7 +4,7 @@ import jakarta.annotation.Resource;
 import org.apache.dubbo.config.annotation.DubboReference;
 import org.apache.dubbo.rpc.RpcContext;
 import com.logilong.live.im.core.server.interfaces.constants.ImCoreServerConstants;
-import com.logilong.live.im.core.server.interfaces.rpc.IRouterHandlerRpc;
+import com.logilong.live.im.core.server.interfaces.rpc.IRouterHandlerRPC;
 import com.logilong.live.im.dto.ImMsgBody;
 import com.logilong.live.im.router.provider.service.ImRouterService;
 import org.springframework.data.redis.core.StringRedisTemplate;
@@ -19,7 +19,7 @@ import java.util.stream.Collectors;
 public class ImRouterServiceImpl implements ImRouterService {
 
     @DubboReference
-    private IRouterHandlerRpc routerHandlerRpc;
+    private IRouterHandlerRPC routerHandlerRpc;
     @Resource
     private StringRedisTemplate stringRedisTemplate;
 

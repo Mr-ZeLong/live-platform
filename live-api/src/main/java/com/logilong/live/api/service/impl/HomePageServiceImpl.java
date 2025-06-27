@@ -5,8 +5,8 @@ import com.logilong.live.api.service.IHomePageService;
 import com.logilong.live.api.vo.HomePageVO;
 import com.logilong.live.user.constants.UserTagsEnum;
 import com.logilong.live.user.dto.UserDTO;
-import com.logilong.live.user.interfaces.IUserRpc;
-import com.logilong.live.user.interfaces.IUserTagRpc;
+import com.logilong.live.user.interfaces.IUserRPC;
+import com.logilong.live.user.interfaces.IUserTagRPC;
 import org.springframework.stereotype.Service;
 
 
@@ -14,9 +14,9 @@ import org.springframework.stereotype.Service;
 public class HomePageServiceImpl implements IHomePageService {
 
     @DubboReference
-    private IUserRpc userRpc;
+    private IUserRPC userRpc;
     @DubboReference
-    private IUserTagRpc userTagRpc;
+    private IUserTagRPC userTagRpc;
 
     @Override
     public HomePageVO initPage(Long userId) {

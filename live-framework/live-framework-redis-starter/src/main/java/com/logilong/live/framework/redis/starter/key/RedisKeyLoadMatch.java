@@ -11,11 +11,13 @@ import java.util.Arrays;
 import java.util.List;
 
 /**
- * 让各类keyBuilder能够根据类名与引入的模块的spring.application.name做匹配，进行条件装配
+ * 若后续有其他的项目，则会有很多的keyBuilder，那么需要一个匹配器，来匹配当前项目所使用的keyBuilder
+ * 这里只加载live项目的keyBuilder，其他项目的keyBuilder则不需要加载，避免浪费资源
  */
+
 public class RedisKeyLoadMatch implements Condition {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(RedisKeyLoadMatch.class);
+    private final static Logger LOGGER = LoggerFactory.getLogger(RedisKeyLoadMatch.class);
 
     private static final String PREFIX = "live";
 
@@ -35,9 +37,7 @@ public class RedisKeyLoadMatch implements Condition {
             String classSimplyName = PREFIX + splitList.get(splitList.size() - 1).toLowerCase();
             boolean matchStatus = classSimplyName.contains(appName.replaceAll("-", ""));
             LOGGER.info("keyBuilderClass is {},matchStatus is {}", keyBuilderName, matchStatus);
-        } catch (NoSuchFieldException e) {
-            throw new RuntimeException(e);
-        } catch (IllegalAccessException e) {
+        } catch (NoSuchFieldException | IllegalAccessException e) {
             throw new RuntimeException(e);
         }
         return true;

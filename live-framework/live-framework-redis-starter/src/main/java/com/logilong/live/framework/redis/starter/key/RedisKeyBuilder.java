@@ -2,10 +2,14 @@ package com.logilong.live.framework.redis.starter.key;
 
 import org.springframework.beans.factory.annotation.Value;
 
+/**
+ * RedisKey构建模板
+ **/
 public class RedisKeyBuilder {
 
     @Value("${spring.application.name}")
     private String applicationName;
+
     private static final String SPLIT_ITEM = ":";
 
     public String getSplitItem() {

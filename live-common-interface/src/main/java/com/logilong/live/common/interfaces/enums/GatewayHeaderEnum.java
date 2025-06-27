@@ -14,6 +14,6 @@ public enum GatewayHeaderEnum {
 
     USER_LOGIN_ID("用户id","gh_user_id");
 
-    final String desc;
-    final String name;
+    private final String desc;
+    private final String name;
 }

@@ -8,7 +8,6 @@ import com.logilong.live.im.core.server.common.ImContextUtils;
 import com.logilong.live.im.core.server.common.ImMsg;
 import com.logilong.live.im.core.server.handler.ImHandlerFactory;
 import com.logilong.live.im.core.server.handler.impl.LogoutMsgHandler;
-import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Component;
 
 /**
@@ -21,8 +20,6 @@ public class TcpImServerCoreHandler extends SimpleChannelInboundHandler<ImMsg> {
     @Resource
     private ImHandlerFactory imHandlerFactory;
     @Resource
-    private RedisTemplate<String, Object> redisTemplate;
-    @Resource
     private LogoutMsgHandler logoutMsgHandler;
 
     @Override
@@ -32,9 +29,6 @@ public class TcpImServerCoreHandler extends SimpleChannelInboundHandler<ImMsg> {
 
     /**
      * 正常或者意外断线，都会触发到这里
-     *
-     * @param ctx
-     * @throws Exception
      */
     @Override
     public void channelInactive(ChannelHandlerContext ctx) throws Exception {

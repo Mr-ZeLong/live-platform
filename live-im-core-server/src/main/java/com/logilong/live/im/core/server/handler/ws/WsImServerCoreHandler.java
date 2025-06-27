@@ -22,7 +22,7 @@ import org.springframework.stereotype.Component;
  */
 @Component
 @ChannelHandler.Sharable
-public class WsImServerCoreHandler extends SimpleChannelInboundHandler {
+public class WsImServerCoreHandler extends SimpleChannelInboundHandler<WebSocketFrame> {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(WsImServerCoreHandler.class);
 
@@ -34,17 +34,12 @@ public class WsImServerCoreHandler extends SimpleChannelInboundHandler {
     private LogoutMsgHandler logoutMsgHandler;
 
     @Override
-    protected void channelRead0(ChannelHandlerContext ctx, Object msg) throws Exception {
-        if (msg instanceof WebSocketFrame) {
-            wsMsgHandler(ctx, (WebSocketFrame) msg);
-        }
+    protected void channelRead0(ChannelHandlerContext ctx, WebSocketFrame msg) throws Exception {
+        wsMsgHandler(ctx,msg);
     }
 
     /**
      * 正常或者意外断线，都会触发到这里
-     *
-     * @param ctx
-     * @throws Exception
      */
     @Override
     public void channelInactive(ChannelHandlerContext ctx) throws Exception {

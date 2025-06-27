@@ -4,7 +4,7 @@ import lombok.Data;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Configuration;
 
-@ConfigurationProperties(prefix = "sms.ccp")
+@ConfigurationProperties(prefix = "live.sms.ccp")
 @Configuration
 @Data
 public class ApplicationProperties {

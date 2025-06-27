@@ -12,6 +12,6 @@ public enum CommonStatusEnum {
     INVALID_STATUS(0,"无效"),
     VALID_STATUS(1,"有效");
 
-    final int code;
-    final String desc;
+    private final int code;
+    private final String desc;
 }

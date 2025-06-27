@@ -45,7 +45,7 @@ public class RefreshLivingRoomListJob implements InitializingBean {
         public void run() {
             String cacheKey = cacheKeyBuilder.buildRefreshLivingRoomListLock();
             //这把锁等它自动过期
-            boolean lockStatus = redisTemplate.opsForValue().setIfAbsent(cacheKey, 1, 1, TimeUnit.SECONDS);
+            boolean lockStatus = Boolean.TRUE.equals(redisTemplate.opsForValue().setIfAbsent(cacheKey, 1, 1, TimeUnit.SECONDS));
             if (lockStatus) {
                 LOGGER.debug("[RefreshLivingRoomListJob] starting 加载db中记录的直播间进redis里");
                 refreshDBToRedis(LivingRoomTypeEnum.DEFAULT_LIVING_ROOM.getCode());

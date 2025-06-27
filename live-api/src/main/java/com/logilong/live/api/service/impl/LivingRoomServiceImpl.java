@@ -20,9 +20,9 @@ import com.logilong.live.im.constants.AppIdEnum;
 import com.logilong.live.living.interfaces.dto.LivingPkRespDTO;
 import com.logilong.live.living.interfaces.dto.LivingRoomReqDTO;
 import com.logilong.live.living.interfaces.dto.LivingRoomRespDTO;
-import com.logilong.live.living.interfaces.rpc.ILivingRoomRpc;
+import com.logilong.live.living.interfaces.rpc.ILivingRoomRPC;
 import com.logilong.live.user.dto.UserDTO;
-import com.logilong.live.user.interfaces.IUserRpc;
+import com.logilong.live.user.interfaces.IUserRPC;
 import com.logilong.live.web.starter.context.LiveRequestContext;
 import com.logilong.live.web.starter.error.BizBaseErrorEnum;
 import com.logilong.live.web.starter.error.ErrorAssert;
@@ -39,9 +39,9 @@ import java.util.stream.Collectors;
 public class LivingRoomServiceImpl implements ILivingRoomService {
 
     @DubboReference
-    private IUserRpc userRpc;
+    private IUserRPC userRpc;
     @DubboReference
-    private ILivingRoomRpc livingRoomRpc;
+    private ILivingRoomRPC livingRoomRpc;
     @DubboReference
     private IRedPacketConfigRpc redPacketConfigRpc;
 

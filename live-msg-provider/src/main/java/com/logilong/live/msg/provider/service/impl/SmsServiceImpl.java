@@ -96,9 +96,6 @@ public class SmsServiceImpl implements ISmsService {
 
     /**
      * 给容联云平台发送短信操作
-     *
-     * @param phone
-     * @param code
      */
     private boolean sendSmsToCCP(String phone, Integer code) {
         logger.info("phone is {},code is {}", phone, code);
@@ -107,7 +104,7 @@ public class SmsServiceImpl implements ISmsService {
             return true;
         }
         try {
-            //生产环境请求地址：app.cloopen.com
+            // 生产环境请求地址：app.cloopen.com
             String serverIp = applicationProperties.getSmsServerIp();
             //请求端口
             String serverPort = String.valueOf(applicationProperties.getPort());

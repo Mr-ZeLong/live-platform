@@ -50,16 +50,12 @@ public class LogoutMsgHandler implements SimplyHandler {
 
     /**
      * 登出的时候，发送确认信号，这个是正常网络断开才会发送，异常断线则不发送
-     *
-     * @param ctx
-     * @param userId
-     * @param appId
      */
     private void logoutMsgNotice(ChannelHandlerContext ctx, Long userId, Integer appId) {
         ImMsgBody respBody = new ImMsgBody();
         respBody.setAppId(appId);
         respBody.setUserId(userId);
-        respBody.setData("true");
+        respBody.setData("im-core-server 用户im退出登录成功，返回的响应");
         ImMsg respMsg = ImMsg.build(ImMsgCodeEnum.IM_LOGOUT_MSG.getCode(), JSON.toJSONString(respBody));
         ctx.writeAndFlush(respMsg);
         ctx.close();
@@ -67,10 +63,6 @@ public class LogoutMsgHandler implements SimplyHandler {
 
     /**
      * 登出的时候做缓存的清理和mq通知
-     *
-     * @param ctx
-     * @param userId
-     * @param appId
      */
     public void logoutHandler(ChannelHandlerContext ctx, Long userId, Integer appId) {
         LOGGER.info("[LogoutMsgHandler] logout success,userId is {},appId is {}", userId, appId);
@@ -84,17 +76,13 @@ public class LogoutMsgHandler implements SimplyHandler {
 
     /**
      * 登出的时候发送mq消息
-     *
-     * @param ctx
-     * @param userId
-     * @param appId
      */
     public void sendLogoutMQ(ChannelHandlerContext ctx, Long userId, Integer appId) {
         ImOfflineDTO imOfflineDTO = new ImOfflineDTO();
         imOfflineDTO.setUserId(userId);
         imOfflineDTO.setRoomId(ImContextUtils.getRoomId(ctx));
         imOfflineDTO.setAppId(appId);
-        imOfflineDTO.setLoginTime(System.currentTimeMillis());
+        imOfflineDTO.setLogoutTime(System.currentTimeMillis());
         Message message = new Message();
         message.setTopic(ImCoreServerProviderTopicNames.IM_OFFLINE_TOPIC);
         message.setBody(JSON.toJSONString(imOfflineDTO).getBytes());

@@ -93,9 +93,9 @@
         </dependency>
 
         <dependency>
-            <groupId>org.apache.rocketmq</groupId>
-            <artifactId>rocketmq-client</artifactId>
-            <version>${rocketmq.version}</version>
+            <groupId>com.logilong</groupId>
+            <artifactId>live-framework-mq-starter</artifactId>
+            <version>${project.version}</version>
         </dependency>
 
         <!-- 下面是自定义组件 -->
@@ -119,6 +119,17 @@
             <artifactId>live-framework-redis-starter</artifactId>
             <version>${project.version}</version>
         </dependency>
+        <dependency>
+            <groupId>com.logilong</groupId>
+            <artifactId>live-id-generate-interface</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.logilong</groupId>
+            <artifactId>live-account-interface</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+
     </dependencies>
 
     <build>

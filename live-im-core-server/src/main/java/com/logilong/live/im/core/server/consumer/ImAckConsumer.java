@@ -5,6 +5,7 @@ import jakarta.annotation.Resource;
 import org.apache.rocketmq.client.consumer.DefaultMQPushConsumer;
 import org.apache.rocketmq.client.consumer.listener.ConsumeConcurrentlyStatus;
 import org.apache.rocketmq.client.consumer.listener.MessageListenerConcurrently;
+import org.apache.rocketmq.client.exception.MQClientException;
 import org.apache.rocketmq.common.consumer.ConsumeFromWhere;
 import com.logilong.live.common.interfaces.topic.ImCoreServerProviderTopicNames;
 import com.logilong.live.framework.mq.starter.properties.RocketMQConsumerProperties;
@@ -31,6 +32,10 @@ public class ImAckConsumer implements InitializingBean {
 
     @Override
     public void afterPropertiesSet() throws Exception {
+        initConsumer();
+    }
+
+    private void initConsumer() throws Exception {
         DefaultMQPushConsumer mqPushConsumer = new DefaultMQPushConsumer();
         mqPushConsumer.setVipChannelEnabled(false);
         //设置我们的namesrv地址
@@ -51,9 +56,8 @@ public class ImAckConsumer implements InitializingBean {
             }
             //只支持一次重发
             if (retryTimes < 2) {
-                msgAckCheckService.recordMsgAck(imMsgBody, retryTimes + 1);
-                msgAckCheckService.sendDelayMsg(imMsgBody);
-                routerHandlerService.sendMsgToClient(imMsgBody);
+                routerHandlerService.onReceive(imMsgBody, retryTimes+1);
+
             } else {
                 msgAckCheckService.doMsgAck(imMsgBody);
             }

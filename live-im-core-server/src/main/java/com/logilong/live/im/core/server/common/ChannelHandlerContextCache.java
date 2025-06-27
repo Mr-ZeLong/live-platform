@@ -12,7 +12,7 @@ public class ChannelHandlerContextCache {
      */
     private static String SERVER_IP_ADDRESS = "";
 
-    private static Map<Long, ChannelHandlerContext> channelHandlerContextMap = new HashMap<>();
+    private static final Map<Long, ChannelHandlerContext> channelHandlerContextMap = new HashMap<>();
 
     public static String getServerIpAddress() {
         return SERVER_IP_ADDRESS;

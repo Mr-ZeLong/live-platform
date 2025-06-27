@@ -55,16 +55,14 @@ public class HeartBeatImMsgHandler implements SimplyHandler {
         ImMsgBody msgBody = new ImMsgBody();
         msgBody.setUserId(userId);
         msgBody.setAppId(appId);
-        msgBody.setData("true");
+        msgBody.setData("im-core-server 接收到心跳包，返回的响应");
         ImMsg respMsg = ImMsg.build(ImMsgCodeEnum.IM_HEARTBEAT_MSG.getCode(), JSON.toJSONString(msgBody));
         LOGGER.debug("[HeartBeatImMsgHandler] imMsg is {}", imMsg);
-        ctx.writeAndFlush(respMsg);
+        // ctx.writeAndFlush(respMsg);
     }
 
     /**
      * 清理掉过期不在线的用户留下的心跳记录(在两次心跳包的发送间隔中，如果没有重新更新score值，就会导致被删除)
-     *
-     * @param redisKey
      */
     private void removeExpireRecord(String redisKey) {
         redisTemplate.opsForZSet().removeRangeByScore(redisKey, 0, System.currentTimeMillis() - ImConstants.DEFAULT_HEART_BEAT_GAP * 1000 * 2);
@@ -72,9 +70,6 @@ public class HeartBeatImMsgHandler implements SimplyHandler {
 
     /**
      * 记录用户最近一次心跳时间到zSet上
-     *
-     * @param userId
-     * @param redisKey
      */
     private void recordOnlineTime(Long userId, String redisKey) {
         redisTemplate.opsForZSet().add(redisKey, userId, System.currentTimeMillis());

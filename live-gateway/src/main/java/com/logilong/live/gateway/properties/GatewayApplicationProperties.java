@@ -7,7 +7,7 @@ import org.springframework.context.annotation.Configuration;
 
 import java.util.List;
 
-@ConfigurationProperties(prefix = "gateway")
+@ConfigurationProperties(prefix = "live.gateway")
 @Configuration
 @RefreshScope
 @Data

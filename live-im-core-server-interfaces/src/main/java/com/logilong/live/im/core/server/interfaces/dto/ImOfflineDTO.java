@@ -13,5 +13,5 @@ public class ImOfflineDTO implements Serializable {
     private Long userId;
     private Integer appId;
     private Integer roomId;
-    private Long loginTime;
+    private Long logoutTime;
 }

@@ -47,7 +47,7 @@ public class BizImMsgHandler implements SimplyHandler {
             SendResult sendResult = mqProducer.send(message);
             LOGGER.info("[BizImMsgHandler]消息投递结果:{}", sendResult);
         } catch (Exception e) {
-            LOGGER.error("send error ,erros is :", e);
+            LOGGER.error("send error ,error is :", e);
             throw new RuntimeException(e);
         }
     }

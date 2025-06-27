@@ -11,7 +11,7 @@ public enum ErrorAppIdEnum {
 
     LIVE_API_ERROR(101,"live-api");
 
-    final int code;
-    final String msg;
+    private final int code;
+    private final String msg;
 
 }
