@@ -21,7 +21,7 @@ spring:
         namespace: live-test
   config:
     import:
-      - optional:nacos:live-gateway.yaml
+      - optional:nacos:${spring.application.name}.yaml
 
 logging:
   level:

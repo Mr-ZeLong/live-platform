@@ -19,7 +19,7 @@ public interface ILiveCurrencyAccountService {
     /**
      * 扣减虚拟币
      */
-    void decr(Long userId, int num);
+    boolean decr(Long userId, int num);
 
     /**
      * 查询账户

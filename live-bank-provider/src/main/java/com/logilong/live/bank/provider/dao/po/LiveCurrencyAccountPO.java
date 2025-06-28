@@ -8,7 +8,7 @@ import lombok.Data;
 import java.util.Date;
 
 /**
- * 旗鱼平台虚拟货币账户
+ * 直播平台虚拟货币账户
  */
 @Data
 @TableName("t_live_currency_account")

@@ -6,7 +6,7 @@ import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import jakarta.annotation.Resource;
 import org.apache.dubbo.config.annotation.DubboReference;
 import com.logilong.live.framework.redis.starter.key.GiftProviderCacheKeyBuilder;
-import com.logilong.live.bank.interfaces.ILiveCurrencyAccountRpc;
+import com.logilong.live.bank.interfaces.ILiveCurrencyAccountRPC;
 import com.logilong.live.common.interfaces.topic.GiftProviderTopicNames;
 import com.logilong.live.common.interfaces.utils.ListUtils;
 import com.logilong.live.gift.constants.RedPacketStatusEnum;
@@ -53,7 +53,7 @@ public class RedPacketConfigServiceImpl implements IRedPacketConfigService {
     @DubboReference
     private ILivingRoomRPC livingRoomRpc;
     @DubboReference
-    private ILiveCurrencyAccountRpc liveCurrencyAccountRpc;
+    private ILiveCurrencyAccountRPC liveCurrencyAccountRpc;
     @Resource
     private MQProducer mqProducer;
 

@@ -7,6 +7,9 @@ import lombok.Data;
 
 import java.util.Date;
 
+/**
+ * 送礼物服务（用户的账户需要有一定的余额）通过一个接口，返回可以购买的产品列表, 映射我们的每个虚拟商品
+ */
 @Data
 @TableName("t_pay_product")
 public class PayProductPO {

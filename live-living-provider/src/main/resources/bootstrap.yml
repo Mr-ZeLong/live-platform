@@ -1,4 +1,6 @@
 spring:
+  application:
+    name: live-living-provider
   main:
     allow-circular-references: true
   cloud:
@@ -19,4 +21,4 @@ spring:
         namespace: live-test
   config:
     import:
-      - optional:nacos:live-living-provider.yaml
+      - optional:nacos:${spring.application.name}.yaml

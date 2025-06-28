@@ -9,7 +9,7 @@ public class PayProductReqVO {
     /**
      * 产品id
      */
-    private Integer productId;
+    private Long productId;
 
     /**
      * 支付来源 (直播间，个人中心，聊天页面，第三方宣传页面，广告弹窗引导)

@@ -13,11 +13,11 @@ import java.util.concurrent.CountDownLatch;
 @EnableDubbo
 public class BankProviderApplication {
 
-    public static void main(String[] args) throws InterruptedException {
-        CountDownLatch countDownLatch = new CountDownLatch(1);
+    public static void main(String[] args) {
+//        CountDownLatch countDownLatch = new CountDownLatch(1);
         SpringApplication springApplication = new SpringApplication(BankProviderApplication.class);
         springApplication.setWebApplicationType(WebApplicationType.NONE);
         springApplication.run(args);
-        countDownLatch.await();
+//        countDownLatch.await();
     }
 }

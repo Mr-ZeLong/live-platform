@@ -4,7 +4,7 @@ import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import jakarta.annotation.Resource;
 import com.logilong.live.framework.redis.starter.key.BankProviderCacheKeyBuilder;
 import com.logilong.live.bank.dto.PayProductDTO;
-import com.logilong.live.bank.provider.dao.mapper.PayProductMapper;
+import com.logilong.live.bank.provider.dao.mapper.IPayProductMapper;
 import com.logilong.live.bank.provider.dao.po.PayProductPO;
 import com.logilong.live.bank.provider.service.IPayProductService;
 import com.logilong.live.common.interfaces.enums.CommonStatusEnum;
@@ -16,13 +16,12 @@ import org.springframework.util.CollectionUtils;
 import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
-import java.util.stream.Collectors;
 
 @Service
 public class PayProductServiceImpl implements IPayProductService {
 
     @Resource
-    private PayProductMapper payProductMapper;
+    private IPayProductMapper payProductMapper;
     @Resource
     private RedisTemplate<String, Object> redisTemplate;
     @Resource
@@ -45,17 +44,18 @@ public class PayProductServiceImpl implements IPayProductService {
         List<PayProductDTO> payProductDTOS = ConvertBeanUtils.convertList(payProductMapper.selectList(queryWrapper), PayProductDTO.class);
         if (CollectionUtils.isEmpty(payProductDTOS)) {
             redisTemplate.opsForList().leftPush(cacheKey, new PayProductDTO());
-            redisTemplate.expire(cacheKey, 1L, TimeUnit.MINUTES);
+            redisTemplate.expire(cacheKey, 3, TimeUnit.MINUTES);
             return Collections.emptyList();
         }
+        redisTemplate.delete(cacheKey);
         // List类型的putAll放入集合有bug，需要转换为数组
         redisTemplate.opsForList().leftPushAll(cacheKey, payProductDTOS.toArray());
-        redisTemplate.expire(cacheKey, 30L, TimeUnit.MINUTES);
+        redisTemplate.expire(cacheKey, 30, TimeUnit.MINUTES);
         return payProductDTOS;
     }
 
     @Override
-    public PayProductDTO getByProductId(Integer productId) {
+    public PayProductDTO getByProductId(Long productId) {
         String cacheKey = cacheKeyBuilder.buildPayProductItemCache(productId);
         PayProductDTO payProductDTO = (PayProductDTO) redisTemplate.opsForValue().get(cacheKey);
         if (payProductDTO != null) {
@@ -64,6 +64,7 @@ public class PayProductServiceImpl implements IPayProductService {
             }
             return payProductDTO;
         }
+
         LambdaQueryWrapper<PayProductPO> queryWrapper = new LambdaQueryWrapper<>();
         queryWrapper.eq(PayProductPO::getId, productId);
         queryWrapper.eq(PayProductPO::getValidStatus, CommonStatusEnum.VALID_STATUS.getCode());

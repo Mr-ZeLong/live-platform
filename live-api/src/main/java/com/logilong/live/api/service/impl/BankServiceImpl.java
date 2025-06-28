@@ -12,9 +12,9 @@ import com.logilong.live.api.vo.resp.PayProductVO;
 import com.logilong.live.bank.constants.OrderStatusEnum;
 import com.logilong.live.bank.dto.PayOrderDTO;
 import com.logilong.live.bank.dto.PayProductDTO;
-import com.logilong.live.bank.interfaces.IPayOrderRpc;
-import com.logilong.live.bank.interfaces.IPayProductRpc;
-import com.logilong.live.bank.interfaces.ILiveCurrencyAccountRpc;
+import com.logilong.live.bank.interfaces.IPayOrderRPC;
+import com.logilong.live.bank.interfaces.IPayProductRPC;
+import com.logilong.live.bank.interfaces.ILiveCurrencyAccountRPC;
 import com.logilong.live.bank.constants.PaySourceEnum;
 import com.logilong.live.web.starter.context.LiveRequestContext;
 import com.logilong.live.web.starter.error.BizBaseErrorEnum;
@@ -29,11 +29,11 @@ import java.util.*;
 public class BankServiceImpl implements IBankService {
 
     @DubboReference
-    private IPayProductRpc payProductRpc;
+    private IPayProductRPC payProductRpc;
     @DubboReference
-    private ILiveCurrencyAccountRpc liveCurrencyAccountRpc;
+    private ILiveCurrencyAccountRPC liveCurrencyAccountRpc;
     @DubboReference
-    private IPayOrderRpc payOrderRpc;
+    private IPayOrderRPC payOrderRpc;
     @Resource
     private RestTemplate restTemplate;
 

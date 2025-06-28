@@ -40,6 +40,8 @@
         <module>live-gift-provider</module>
         <module>live-bank-provider</module>
         <module>live-bank-api</module>
+        <module>live-sku-interface</module>
+        <module>live-sku-provider</module>
     </modules>
 
     <properties>

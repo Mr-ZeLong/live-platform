@@ -2,7 +2,7 @@ package com.logilong.live.bank.provider.service.impl;
 
 import com.logilong.live.bank.provider.dao.po.LiveCurrencyTradePO;
 import jakarta.annotation.Resource;
-import com.logilong.live.bank.provider.dao.mapper.LiveCurrencyTradeMapper;
+import com.logilong.live.bank.provider.dao.mapper.ILiveCurrencyTradeMapper;
 import com.logilong.live.bank.provider.service.ILiveCurrencyTradeService;
 import com.logilong.live.common.interfaces.enums.CommonStatusEnum;
 import org.slf4j.Logger;
@@ -15,7 +15,7 @@ public class LiveCurrencyTradeServiceImpl implements ILiveCurrencyTradeService {
     private static final Logger LOGGER = LoggerFactory.getLogger(LiveCurrencyTradeServiceImpl.class);
     
     @Resource
-    private LiveCurrencyTradeMapper liveCurrencyTradeMapper;
+    private ILiveCurrencyTradeMapper liveCurrencyTradeMapper;
     
     @Override
     public boolean insertOne(Long userId, int num, int type) {

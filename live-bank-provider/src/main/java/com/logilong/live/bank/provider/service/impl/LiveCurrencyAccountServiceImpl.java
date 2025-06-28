@@ -7,7 +7,7 @@ import com.logilong.live.framework.redis.starter.key.BankProviderCacheKeyBuilder
 import com.logilong.live.bank.constants.TradeTypeEnum;
 import com.logilong.live.bank.dto.AccountTradeReqDTO;
 import com.logilong.live.bank.dto.AccountTradeRespDTO;
-import com.logilong.live.bank.provider.dao.mapper.LiveCurrencyAccountMapper;
+import com.logilong.live.bank.provider.dao.mapper.ILiveCurrencyAccountMapper;
 import com.logilong.live.bank.provider.service.ILiveCurrencyAccountService;
 import com.logilong.live.bank.provider.service.ILiveCurrencyTradeService;
 import com.logilong.live.common.interfaces.enums.CommonStatusEnum;
@@ -25,14 +25,18 @@ import java.util.concurrent.TimeUnit;
 public class LiveCurrencyAccountServiceImpl implements ILiveCurrencyAccountService {
 
     @Resource
-    private LiveCurrencyAccountMapper liveCurrencyAccountMapper;
+    private ILiveCurrencyAccountMapper liveCurrencyAccountMapper;
     @Resource
     private ILiveCurrencyTradeService liveCurrencyTradeService;
     @Resource
     private RedisTemplate<String, Object> redisTemplate;
     @Resource
     private BankProviderCacheKeyBuilder cacheKeyBuilder;
+    @Resource
+    private LiveCurrencyAccountServiceImpl self;
+
     private static final ThreadPoolExecutor threadPoolExecutor = new ThreadPoolExecutor(2, 4, 30, TimeUnit.SECONDS, new ArrayBlockingQueue<>(1000));
+
 
     @Override
     public boolean insertOne(Long userId) {
@@ -53,34 +57,57 @@ public class LiveCurrencyAccountServiceImpl implements ILiveCurrencyAccountServi
         // 如果Redis中存在缓存，基于Redis的余额扣减
         if (Boolean.TRUE.equals(redisTemplate.hasKey(cacheKey))) {
             redisTemplate.opsForValue().increment(cacheKey, num);
+            redisTemplate.expire(cacheKey, 5, TimeUnit.MINUTES);
         }
         // DB层操作（包括余额增加和流水记录）
-        threadPoolExecutor.execute(new Runnable() {
-            @Override
-            public void run() {
-                // 在异步线程池中完成数据库层的增加和流水记录，带有事务
-                // 异步操作：CAP中的AP，没有追求强一致性，保证最终一致性即可（BASE理论）
-                incrDBHandler(userId, num);
-            }
+        threadPoolExecutor.execute(() -> {
+            // 在异步线程池中完成数据库层的增加和流水记录，带有事务
+            // 异步操作：CAP中的AP，没有追求强一致性，保证最终一致性即可（BASE理论）
+            self.consumeIncrDBHandler(userId, num);
         });
+    }
+
+    @Transactional(rollbackFor = Exception.class)
+    public void consumeIncrDBHandler(long userId, int num) {
+        LiveCurrencyAccountPO liveCurrencyAccountPO = liveCurrencyAccountMapper.selectById(userId);
+        if (liveCurrencyAccountPO == null) {
+            insertOne(userId);
+        }
+        //更新db，插入db
+        liveCurrencyAccountMapper.incr(userId, num);
+        //流水记录
+        liveCurrencyTradeService.insertOne(userId, num, TradeTypeEnum.SEND_GIFT_TRADE.getCode());
     }
 
     @Override
-    public void decr(Long userId, int num) {
+    public boolean decr(Long userId, int num) {
+        //扣减余额
         String cacheKey = cacheKeyBuilder.buildUserBalance(userId);
-        // 1 基于Redis的余额扣减
-        redisTemplate.opsForValue().decrement(cacheKey, num);
-
-        // 2 做DB层的操作（包括余额扣减和流水记录）
-        threadPoolExecutor.execute(new Runnable() {
-            @Override
-            public void run() {
-                // 在异步线程池中完成数据库层的扣减和流水记录，带有事务
-                // 异步操作：CAP中的AP，没有追求强一致性，保证最终一致性即可（BASE理论）
-                consumeDBHandler(userId, num);
+        if (Boolean.TRUE.equals(redisTemplate.hasKey(cacheKey))) {
+            //基于redis的扣减操作
+            Long result = redisTemplate.opsForValue().decrement(cacheKey, num);
+            redisTemplate.expire(cacheKey, 5, TimeUnit.MINUTES);
+            boolean isSuccess = result != null && result > 0;
+            if (isSuccess) {
+                threadPoolExecutor.execute(() -> {
+                    //分布式架构下，cap理论，可用性和性能，强一致性，柔弱的一致性处理
+                    //在异步线程池中完成数据库层的扣减和流水记录插入操作，带有事务
+                    self.consumeDecrDBHandler(userId, num);
+                });
             }
-        });
+            return isSuccess;
+        }
+        return false;
     }
+
+    @Transactional(rollbackFor = Exception.class)
+    public void consumeDecrDBHandler(long userId, int num) {
+        //更新db，插入db
+        liveCurrencyAccountMapper.decr(userId, num);
+        //流水记录
+        liveCurrencyTradeService.insertOne(userId, num * -1, TradeTypeEnum.SEND_GIFT_TRADE.getCode());
+    }
+
 
     @Override
     public LiveCurrencyAccountDTO getByUserId(Long userId) {
@@ -115,54 +142,49 @@ public class LiveCurrencyAccountServiceImpl implements ILiveCurrencyAccountServi
     // 4.拦下大部分的求，如果余额不足，（接口还得做防止重复点击，客户端也要放重复）
     // 5.同步送礼接口，只完成简单的余额校验，发送mq，在mq的异步操作里面，完成二次余额校验，余额扣减，礼物发送
     // 6.如果余额不足，是不是可以利用im，反向通知发送方，余额充足，利用im实现礼物特效推送
+//    @Override
+//    public AccountTradeRespDTO consumeForSendGift(AccountTradeReqDTO accountTradeReqDTO) {
+//        // 1 余额判断并在Redis中扣减余额
+//        Long userId = accountTradeReqDTO.getUserId();
+//        int num = accountTradeReqDTO.getNum();
+//        String lockKey = "live-bank-provider:balance:lock:" + userId;
+//        Boolean isLock = redisTemplate.opsForValue().setIfAbsent(lockKey, 1, 2L, TimeUnit.SECONDS);
+//        // 判断余额和余额扣减操作要保证原子性
+//        if (Boolean.TRUE.equals(isLock)) {
+//            try {
+//                Integer balance = this.getBalance(userId);
+//                if (balance == null || balance < num) {
+//                    return AccountTradeRespDTO.buildFail(userId, "账户余额不足", 1);
+//                }
+//                // 封装的方法：包括redis余额扣减和 异步DB层处理
+//                this.decr(userId, num);
+//            } finally {
+//                redisTemplate.delete(lockKey);
+//            }
+//        } else {
+//            try {
+//                Thread.sleep(ThreadLocalRandom.current().nextLong(500, 1000));
+//            } catch (InterruptedException e) {
+//                e.printStackTrace();
+//            }
+//            // 等待0.5~1秒后重试
+//            consumeForSendGift(accountTradeReqDTO);
+//        }
+//        return AccountTradeRespDTO.buildSuccess(userId, "扣费成功");
+//    }
     @Override
     public AccountTradeRespDTO consumeForSendGift(AccountTradeReqDTO accountTradeReqDTO) {
-        // 1 余额判断并在Redis中扣减余额
-        Long userId = accountTradeReqDTO.getUserId();
+        //余额判断
+        long userId = accountTradeReqDTO.getUserId();
         int num = accountTradeReqDTO.getNum();
-        String lockKey = "live-bank-provider:balance:lock:" + userId;
-        Boolean isLock = redisTemplate.opsForValue().setIfAbsent(lockKey, 1, 2L, TimeUnit.SECONDS);
-        // 判断余额和余额扣减操作要保证原子性
-        if (Boolean.TRUE.equals(isLock)) {
-            try {
-                Integer balance = this.getBalance(userId);
-                if (balance == null || balance < num) {
-                    return AccountTradeRespDTO.buildFail(userId, "账户余额不足", 1);
-                }
-                // 封装的方法：包括redis余额扣减和 异步DB层处理
-                this.decr(userId, num);
-            } finally {
-                redisTemplate.delete(lockKey);
-            }
-        } else {
-            try {
-                Thread.sleep(ThreadLocalRandom.current().nextLong(500, 1000));
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
-            // 等待0.5~1秒后重试
-            consumeForSendGift(accountTradeReqDTO);
+        Integer balance = this.getBalance(userId);
+        if (balance == null || balance < num) {
+            return AccountTradeRespDTO.buildFail(userId, "账户余额不足", 1);
         }
-        return AccountTradeRespDTO.buildSuccess(userId, "扣费成功");
+        this.decr(userId, num);
+        return AccountTradeRespDTO.buildSuccess(userId, "消费成功");
     }
 
-    // 发送礼物数据层的处理
-    @Transactional(rollbackFor = Exception.class)
-    public void consumeDBHandler(Long userId, int num) {
-        // 扣减余额(DB层)
-        liveCurrencyAccountMapper.decr(userId, num);
-        // 流水记录
-        liveCurrencyTradeService.insertOne(userId, num * -1, TradeTypeEnum.SEND_GIFT_TRADE.getCode());
-    }
-
-    // 增加旗鱼币的处理
-    @Transactional(rollbackFor = Exception.class)
-    public void incrDBHandler(Long userId, int num) {
-        // 扣减余额(DB层)
-        liveCurrencyAccountMapper.incr(userId, num);
-        // 流水记录
-        liveCurrencyTradeService.insertOne(userId, num, TradeTypeEnum.SEND_GIFT_TRADE.getCode());
-    }
 
     @Override
     public AccountTradeRespDTO consume(AccountTradeReqDTO accountTradeReqDTO) {

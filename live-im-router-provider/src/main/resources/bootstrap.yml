@@ -1,4 +1,6 @@
 spring:
+  application:
+    name: live-im-router-provider
   cloud:
     nacos:
       username: nacos
@@ -17,7 +19,7 @@ spring:
         namespace: live-test
   config:
     import:
-      - optional:nacos:live-im-router-provider.yaml
+      - optional:nacos:${spring.application.name}.yaml
 
 dubbo:
   consumer:

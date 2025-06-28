@@ -1,4 +1,6 @@
 spring:
+  application:
+    name: live-im-provider
   cloud:
     nacos:
       username: nacos
@@ -17,4 +19,4 @@ spring:
         namespace: live-test
   config:
     import:
-      - optional:nacos:live-im-provider.yaml
+      - optional:nacos:${spring.application.name}.yaml

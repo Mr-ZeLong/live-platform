@@ -13,7 +13,7 @@ public class PayOrderDTO implements Serializable {
 
     private Long id;
     private String orderId;
-    private Integer productId;
+    private Long productId;
     private Integer bizCode;
     private Long userId;
     private Integer source;

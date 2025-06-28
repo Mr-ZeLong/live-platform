@@ -9,8 +9,6 @@ import org.apache.rocketmq.common.consumer.ConsumeFromWhere;
 import com.logilong.live.framework.redis.starter.key.SkuProviderCacheKeyBuilder;
 import com.logilong.live.common.interfaces.topic.SkuProviderTopicNames;
 import com.logilong.live.framework.mq.starter.properties.RocketMQConsumerProperties;
-import com.logilong.live.interfaces.sku.dto.RockBackInfoDTO;
-import com.logilong.live.provider.sku.service.ISkuStockInfoService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.InitializingBean;

@@ -11,6 +11,6 @@ public enum PayProductTypeEnum {
 
     LIVE_COIN(0,"直播间充值-虚拟币产品");
 
-    final Integer code;
-    final String desc;
+    private final Integer code;
+    private final String desc;
 }

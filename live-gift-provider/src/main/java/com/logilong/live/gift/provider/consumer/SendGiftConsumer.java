@@ -12,7 +12,7 @@ import org.apache.rocketmq.common.message.MessageExt;
 import com.logilong.live.framework.redis.starter.key.GiftProviderCacheKeyBuilder;
 import com.logilong.live.bank.dto.AccountTradeReqDTO;
 import com.logilong.live.bank.dto.AccountTradeRespDTO;
-import com.logilong.live.bank.interfaces.ILiveCurrencyAccountRpc;
+import com.logilong.live.bank.interfaces.ILiveCurrencyAccountRPC;
 import com.logilong.live.common.interfaces.dto.SendGiftMq;
 import com.logilong.live.common.interfaces.topic.GiftProviderTopicNames;
 import com.logilong.live.framework.mq.starter.properties.RocketMQConsumerProperties;
@@ -65,7 +65,7 @@ public class SendGiftConsumer implements InitializingBean {
     @Resource
     private GiftProviderCacheKeyBuilder cacheKeyBuilder;
     @DubboReference
-    private ILiveCurrencyAccountRpc liveCurrencyAccountRpc;
+    private ILiveCurrencyAccountRPC liveCurrencyAccountRpc;
     @DubboReference
     private ILivingRoomRPC livingRoomRpc;
     @DubboReference

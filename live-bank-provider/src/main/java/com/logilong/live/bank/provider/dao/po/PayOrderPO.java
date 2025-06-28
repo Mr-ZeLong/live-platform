@@ -14,7 +14,7 @@ public class PayOrderPO {
     @TableId(type = IdType.AUTO)
     private Long id;
     private String orderId;
-    private Integer productId;
+    private Long productId;
     private Long userId;
     private Integer source;
     private Integer payChannel;

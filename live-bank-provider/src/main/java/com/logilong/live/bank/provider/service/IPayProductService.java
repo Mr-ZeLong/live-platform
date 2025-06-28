@@ -14,5 +14,5 @@ public interface IPayProductService {
     /**
      * 根据产品id查询
      */
-    PayProductDTO getByProductId(Integer productId);
+    PayProductDTO getByProductId(Long productId);
 }

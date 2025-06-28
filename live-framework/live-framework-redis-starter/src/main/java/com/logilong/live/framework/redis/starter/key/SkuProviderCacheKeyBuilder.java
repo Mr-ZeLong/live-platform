@@ -20,7 +20,7 @@ public class SkuProviderCacheKeyBuilder extends RedisKeyBuilder {
     public String buildSkuOrderInfoByOrderId(Long orderId) {
         return super.getPrefix() + SKU_ORDER_INFO_BY_ORDER_ID + super.getSplitItem() + orderId;
     }
-    public String buildSkuOrderInfo(Long userId, Long roomId) {
+    public String buildSkuOrderInfo(Long userId, Integer roomId) {
         return super.getPrefix() + SKU_ORDER_INFO + super.getSplitItem() + userId + super.getSplitItem() + roomId;
     }
     public String buildSkuStockSyncLock() {
