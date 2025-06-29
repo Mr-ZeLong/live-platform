@@ -66,6 +66,7 @@ public class GiftConfigServiceImpl implements IGiftConfigService {
             redisTemplate.opsForValue().set(cacheKey, configDTO, 60, TimeUnit.MINUTES);
             return configDTO;
         }
+
         //避免二次请求对db的访问压力
         //假设说 我们是一个非常大的并发场景，大量的请求落入到getByGiftId方法中，假设我们的后台下架了某个礼物
         redisTemplate.opsForValue().set(cacheKey, new GiftConfigDTO(), 5, TimeUnit.MINUTES);
