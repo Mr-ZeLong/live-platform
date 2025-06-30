@@ -80,5 +80,10 @@
             <version>${lombook.version}</version>
             <scope>provided</scope>
         </dependency>
+        <dependency>
+            <groupId>com.logilong</groupId>
+            <artifactId>live-sku-interface</artifactId>
+            <version>${project.version}</version>
+        </dependency>
     </dependencies>
 </project>
