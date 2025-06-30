@@ -6,6 +6,9 @@ import org.springframework.http.client.ClientHttpRequestFactory;
 import org.springframework.http.client.SimpleClientHttpRequestFactory;
 import org.springframework.web.client.RestTemplate;
 
+/**
+ * 不添加该配置类，报错：A component required a bean of type 'org.springframework.web.client.RestTemplate' that could not be found.
+ */
 
 @Configuration
 public class RestTemplateConfig {

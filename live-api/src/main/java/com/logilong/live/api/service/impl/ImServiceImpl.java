@@ -18,20 +18,20 @@ import java.util.List;
 public class ImServiceImpl implements ImService {
 
     @DubboReference
-    private ImTokenRPC imTokenRpc;
+    private ImTokenRPC imTokenRPC;
     @Resource
     private DiscoveryClient discoveryClient;
 
     @Override
     public ImConfigVO getImConfig() {
         ImConfigVO imConfigVO = new ImConfigVO();
-        imConfigVO.setToken(imTokenRpc.createImLoginToken(LiveRequestContext.getUserId(), AppIdEnum.LIVE_BIZ.getCode()));
+        imConfigVO.setToken(imTokenRPC.createImLoginToken(LiveRequestContext.getUserId(), AppIdEnum.LIVE_BIZ.getCode()));
         buildImServerAddress(imConfigVO);
         return imConfigVO;
     }
 
     private void buildImServerAddress(ImConfigVO imConfigVO) {
-        List<ServiceInstance> serviceInstanceList = discoveryClient.getInstances("qiyu-live-im-core-server");
+        List<ServiceInstance> serviceInstanceList = discoveryClient.getInstances("live-im-core-server");
         Collections.shuffle(serviceInstanceList);
         ServiceInstance aimInstance = serviceInstanceList.get(0);
         imConfigVO.setWsImServerAddress(aimInstance.getHost() + ":8086");

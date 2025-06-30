@@ -4,7 +4,7 @@ import com.logilong.live.api.vo.resp.RedPacketReceiveVO;
 import com.logilong.live.gift.dto.RedPacketConfigReqDTO;
 import com.logilong.live.gift.dto.RedPacketConfigRespDTO;
 import com.logilong.live.gift.dto.RedPacketReceiveDTO;
-import com.logilong.live.gift.interfaces.IRedPacketConfigRpc;
+import com.logilong.live.gift.interfaces.IRedPacketConfigRPC;
 import org.apache.dubbo.config.annotation.DubboReference;
 import com.logilong.live.api.error.ApiErrorEnum;
 import com.logilong.live.api.service.ILivingRoomService;
@@ -39,15 +39,15 @@ import java.util.stream.Collectors;
 public class LivingRoomServiceImpl implements ILivingRoomService {
 
     @DubboReference
-    private IUserRPC userRpc;
+    private IUserRPC userRPC;
     @DubboReference
-    private ILivingRoomRPC livingRoomRpc;
+    private ILivingRoomRPC livingRoomRPC;
     @DubboReference
-    private IRedPacketConfigRpc redPacketConfigRpc;
+    private IRedPacketConfigRPC redPacketConfigRPC;
 
     @Override
     public LivingRoomPageRespVO list(LivingRoomReqVO livingRoomReqVO) {
-        PageWrapper<LivingRoomRespDTO>  resultPage = livingRoomRpc.list(ConvertBeanUtils.convert(livingRoomReqVO,LivingRoomReqDTO.class));
+        PageWrapper<LivingRoomRespDTO>  resultPage = livingRoomRPC.list(ConvertBeanUtils.convert(livingRoomReqVO,LivingRoomReqDTO.class));
         LivingRoomPageRespVO livingRoomPageRespVO = new LivingRoomPageRespVO();
         livingRoomPageRespVO.setList(ConvertBeanUtils.convertList(resultPage.getList(), LivingRoomRespVO.class));
         livingRoomPageRespVO.setHasNext(resultPage.isHasNext());
@@ -57,13 +57,13 @@ public class LivingRoomServiceImpl implements ILivingRoomService {
     @Override
     public Integer startingLiving(Integer type) {
         Long userId = LiveRequestContext.getUserId();
-        UserDTO userDTO = userRpc.getByUserId(userId);
+        UserDTO userDTO = userRPC.getByUserId(userId);
         LivingRoomReqDTO livingRoomReqDTO = new LivingRoomReqDTO();
         livingRoomReqDTO.setAnchorId(userId);
         livingRoomReqDTO.setRoomName("主播-" + LiveRequestContext.getUserId() + "的直播间");
         livingRoomReqDTO.setCovertImg(userDTO.getAvatar());
         livingRoomReqDTO.setType(type);
-        return livingRoomRpc.startLivingRoom(livingRoomReqDTO);
+        return livingRoomRPC.startLivingRoom(livingRoomReqDTO);
     }
 
     @Override
@@ -71,7 +71,7 @@ public class LivingRoomServiceImpl implements ILivingRoomService {
         LivingRoomReqDTO reqDTO = ConvertBeanUtils.convert(onlinePkReqVO,LivingRoomReqDTO.class);
         reqDTO.setAppId(AppIdEnum.LIVE_BIZ.getCode());
         reqDTO.setPkObjId(LiveRequestContext.getUserId());
-        LivingPkRespDTO tryOnlineStatus = livingRoomRpc.onlinePK(reqDTO);
+        LivingPkRespDTO tryOnlineStatus = livingRoomRPC.onlinePK(reqDTO);
         ErrorAssert.isTure(tryOnlineStatus.isOnlineStatus(), new LiveErrorException(-1,tryOnlineStatus.getMsg()));
         return true;
     }
@@ -81,14 +81,14 @@ public class LivingRoomServiceImpl implements ILivingRoomService {
         LivingRoomReqDTO livingRoomReqDTO = new LivingRoomReqDTO();
         livingRoomReqDTO.setRoomId(roomId);
         livingRoomReqDTO.setAnchorId(LiveRequestContext.getUserId());
-        return livingRoomRpc.closeLiving(livingRoomReqDTO);
+        return livingRoomRPC.closeLiving(livingRoomReqDTO);
     }
 
     @Override
     public LivingRoomInitVO anchorConfig(Long userId, Integer roomId) {
-        LivingRoomRespDTO respDTO = livingRoomRpc.queryByRoomId(roomId);
+        LivingRoomRespDTO respDTO = livingRoomRPC.queryByRoomId(roomId);
         ErrorAssert.isNotNull(respDTO,ApiErrorEnum.LIVING_ROOM_END);
-        Map<Long,UserDTO> userDTOMap = userRpc.batchQueryUserInfo(Arrays.asList(respDTO.getAnchorId(),userId).stream().distinct().collect(Collectors.toList()));
+        Map<Long,UserDTO> userDTOMap = userRPC.batchQueryUserInfo(Arrays.asList(respDTO.getAnchorId(),userId).stream().distinct().collect(Collectors.toList()));
         UserDTO anchor = userDTOMap.get(respDTO.getAnchorId());
         UserDTO watcher = userDTOMap.get(userId);
         LivingRoomInitVO respVO = new LivingRoomInitVO();
@@ -110,7 +110,7 @@ public class LivingRoomServiceImpl implements ILivingRoomService {
         respVO.setAnchor(isAuthor);
 
         if (isAuthor) {
-            RedPacketConfigRespDTO redPacketConfigRespDTO = redPacketConfigRpc.queryByAnchorId(userId);
+            RedPacketConfigRespDTO redPacketConfigRespDTO = redPacketConfigRPC.queryByAnchorId(userId);
             if (redPacketConfigRespDTO != null) {
                 respVO.setRedPacketConfigCode(redPacketConfigRespDTO.getConfigCode());
             }
@@ -121,21 +121,22 @@ public class LivingRoomServiceImpl implements ILivingRoomService {
 
     @Override
     public Boolean prepareRedPacket(Long userId, Integer roomId) {
-        LivingRoomRespDTO livingRoomRespDTO = livingRoomRpc.queryByRoomId(roomId);
+        LivingRoomRespDTO livingRoomRespDTO = livingRoomRPC.queryByRoomId(roomId);
         ErrorAssert.isNotNull(livingRoomRespDTO, BizBaseErrorEnum.PARAM_ERROR);
         ErrorAssert.isTure(userId.equals(livingRoomRespDTO.getAnchorId()), BizBaseErrorEnum.PARAM_ERROR);
-        return redPacketConfigRpc.prepareRedPacket(userId);
+        return redPacketConfigRPC.prepareRedPacket(userId);
     }
 
     @Override
     public Boolean startRedPacket(Long userId, String code) {
+        LivingRoomRespDTO livingRoomRespDTO = livingRoomRPC.queryByAnchorId(userId);
+        ErrorAssert.isNotNull(livingRoomRespDTO, BizBaseErrorEnum.PARAM_ERROR);
+
         RedPacketConfigReqDTO reqDTO = new RedPacketConfigReqDTO();
         reqDTO.setUserId(userId);
         reqDTO.setRedPacketConfigCode(code);
-        LivingRoomRespDTO livingRoomRespDTO = livingRoomRpc.queryByAnchorId(userId);
-        ErrorAssert.isNotNull(livingRoomRespDTO, BizBaseErrorEnum.PARAM_ERROR);
         reqDTO.setRoomId(livingRoomRespDTO.getId());
-        return redPacketConfigRpc.startRedPacket(reqDTO);
+        return redPacketConfigRPC.startRedPacket(reqDTO);
     }
 
 
@@ -144,7 +145,7 @@ public class LivingRoomServiceImpl implements ILivingRoomService {
         RedPacketConfigReqDTO reqDTO = new RedPacketConfigReqDTO();
         reqDTO.setUserId(userId);
         reqDTO.setRedPacketConfigCode(code);
-        RedPacketReceiveDTO receiveDTO = redPacketConfigRpc.receiveRedPacket(reqDTO);
+        RedPacketReceiveDTO receiveDTO = redPacketConfigRPC.receiveRedPacket(reqDTO);
         RedPacketReceiveVO respVO = new RedPacketReceiveVO();
         if (receiveDTO == null) {
             respVO.setMsg("红包已派发完毕");

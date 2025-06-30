@@ -15,7 +15,7 @@ import com.logilong.live.common.interfaces.dto.SendGiftMq;
 import com.logilong.live.common.interfaces.topic.GiftProviderTopicNames;
 import com.logilong.live.common.interfaces.utils.ConvertBeanUtils;
 import com.logilong.live.gift.dto.GiftConfigDTO;
-import com.logilong.live.gift.interfaces.IGiftConfigRpc;
+import com.logilong.live.gift.interfaces.IGiftConfigRPC;
 import com.logilong.live.web.starter.context.LiveRequestContext;
 import com.logilong.live.web.starter.error.ErrorAssert;
 import org.slf4j.Logger;
@@ -33,7 +33,7 @@ public class GiftServiceImpl implements IGiftService {
     private static final Logger LOGGER = LoggerFactory.getLogger(GiftServiceImpl.class);
 
     @DubboReference
-    private IGiftConfigRpc giftConfigRpc;
+    private IGiftConfigRPC giftConfigRpc;
 
     @Resource
     private MQProducer mqProducer;

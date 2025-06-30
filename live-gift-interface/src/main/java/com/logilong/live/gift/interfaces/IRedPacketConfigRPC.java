@@ -4,13 +4,18 @@ import com.logilong.live.gift.dto.RedPacketConfigReqDTO;
 import com.logilong.live.gift.dto.RedPacketConfigRespDTO;
 import com.logilong.live.gift.dto.RedPacketReceiveDTO;
 
-public interface IRedPacketConfigRpc {
+public interface IRedPacketConfigRPC {
 
     /**
      * 根据主播id查询有无发放红包雨的特权
      */
     RedPacketConfigRespDTO queryByAnchorId(Long anchorId);
-    
+
+    /**
+     * 更新红包雨配置
+     */
+    boolean updateById(RedPacketConfigRespDTO redPacketConfigRespDTO);
+
     /**
      * 新增红包雨配置
      */

@@ -9,7 +9,7 @@ import lombok.ToString;
 @ToString
 public enum RedPacketStatusEnum {
     
-    WAIT(1,"待准备"),
+    NOT_PREPARED(1,"待准备"),
     IS_PREPARED(2, "已准备"),
     IS_SEND(3, "已发送");
 

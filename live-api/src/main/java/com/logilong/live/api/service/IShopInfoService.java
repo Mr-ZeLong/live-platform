@@ -1,21 +1,27 @@
 package com.logilong.live.api.service;
 
-import com.logilong.live.api.vo.req.PrepareOrderVO;
+
+import com.logilong.live.api.vo.PrepareOrderVO;
 import com.logilong.live.api.vo.req.ShopCarReqVO;
 import com.logilong.live.api.vo.req.SkuInfoReqVO;
 import com.logilong.live.api.vo.resp.ShopCarRespVO;
 import com.logilong.live.api.vo.resp.SkuDetailInfoVO;
 import com.logilong.live.api.vo.resp.SkuInfoVO;
-import com.logilong.live.gift.dto.SkuPrepareOrderInfoDTO;
+import com.logilong.live.sku.dto.SkuPrepareOrderInfoDTO;
 
 import java.util.List;
 
 public interface IShopInfoService {
 
+//    /**
+//     * 根据anchorId查询商品列表
+//     */
+//    List<SkuInfoVO> queryByAnchorId(Long anchorId);
+
     /**
-     * 根据anchorId查询商品列表
+     * 根据roomId查询商品列表
      */
-    List<SkuInfoVO> queryByAnchorId(Long anchorId);
+    List<SkuInfoVO> queryByRoomId(Integer roomId);
 
     /**
      * 根据skuId查询商品详情信息
@@ -24,12 +30,12 @@ public interface IShopInfoService {
     /**
      * 添加购物车
      */
-    Boolean addCar(ShopCarReqVO reqVO);
+    Boolean addShopCar(ShopCarReqVO reqVO);
 
     /**
      * 移除购物车
      */
-    Boolean removeFromCar(ShopCarReqVO reqVO);
+    Boolean removeFromShopCar(ShopCarReqVO reqVO);
 
     /**
      * 清空购物车
@@ -39,12 +45,12 @@ public interface IShopInfoService {
     /**
      * 修改购物车中某个商品的数量
      */
-    Boolean addCarItemNum(ShopCarReqVO reqVO);
+    Boolean addShopCarItemNum(ShopCarReqVO reqVO);
 
     /**
      * 查看购物车信息
      */
-    ShopCarRespVO getCarInfo(ShopCarReqVO reqVO);
+    ShopCarRespVO getShopCarInfo(ShopCarReqVO reqVO);
 
     /**
      * 进行预下单操作

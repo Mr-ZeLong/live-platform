@@ -1,7 +1,6 @@
 package com.logilong.live.api.controller;
 
 import jakarta.annotation.Resource;
-import com.logilong.live.api.error.ApiErrorEnum;
 import com.logilong.live.api.service.ILivingRoomService;
 import com.logilong.live.api.vo.LivingRoomInitVO;
 import com.logilong.live.api.vo.req.LivingRoomReqVO;
@@ -60,8 +59,6 @@ public class LivingRoomController {
 
     /**
      * 获取主播相关配置信息（只有主播才会有权限）
-     *
-     * @return
      */
     @PostMapping("/anchorConfig")
     public WebResponseVO anchorConfig(Integer roomId) {
@@ -70,8 +67,6 @@ public class LivingRoomController {
 
     /**
      * 准备生成红包雨数据
-     *
-     * @return
      */
     @PostMapping("/prepareRedPacket")
     @RequestLimit(limit = 1, second = 10, msg = "正在初始化中，请稍等")
@@ -81,8 +76,6 @@ public class LivingRoomController {
 
     /**
      * 开始红包雨活动，广播直播间用户，开始抢红包
-     *
-     * @return
      */
     @PostMapping("/startRedPacket")
     @RequestLimit(limit = 1, second = 10, msg = "正在广播直播间用户，请稍等")
@@ -92,8 +85,6 @@ public class LivingRoomController {
 
     /**
      * 领取红包
-     *
-     * @return
      */
     @RequestLimit(limit = 1, second = 1, msg = "")
     @PostMapping("/receiveRedPacket")

@@ -11,7 +11,7 @@ import org.apache.rocketmq.client.consumer.listener.MessageListenerConcurrently;
 import org.apache.rocketmq.common.consumer.ConsumeFromWhere;
 import org.apache.rocketmq.common.message.MessageExt;
 import com.logilong.live.framework.mq.starter.properties.RocketMQConsumerProperties;
-import com.logilong.live.gift.interfaces.ISkuStockInfoRpc;
+import com.logilong.live.gift.interfaces.ISkuStockInfoRPC;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.InitializingBean;
@@ -24,7 +24,7 @@ public class StartLivingRoomConsumer implements InitializingBean {
     @Resource
     private RocketMQConsumerProperties rocketMQConsumerProperties;
     @DubboReference
-    ISkuStockInfoRpc skuStockInfoRpc;
+    ISkuStockInfoRPC skuStockInfoRpc;
 
     @Override
     public void afterPropertiesSet() throws Exception {

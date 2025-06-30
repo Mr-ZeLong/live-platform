@@ -53,6 +53,8 @@ public class GiftProviderCacheKeyBuilder extends RedisKeyBuilder {
     public String buildRedPacketInitLock(String code) {
         return super.getPrefix() + RED_PACKET_INIT_LOCK + super.getSplitItem() + code;
     }
+
+
     public String buildRedPacketList(String code) {
         return super.getPrefix() + RED_PACKET_LIST + super.getSplitItem() + code;
     }
@@ -80,7 +82,7 @@ public class GiftProviderCacheKeyBuilder extends RedisKeyBuilder {
         return super.getPrefix() + GIFT_LIST_CACHE;
     }
 
-    public String buildRedPacketInitLock() {
+    public String buildGiftListLockCacheKey() {
         return super.getPrefix() + GIFT_LIST_LOCK;
     }
 }

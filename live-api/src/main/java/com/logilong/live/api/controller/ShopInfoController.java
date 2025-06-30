@@ -1,8 +1,8 @@
 package com.logilong.live.api.controller;
 
+import com.logilong.live.api.vo.PrepareOrderVO;
 import jakarta.annotation.Resource;
 import com.logilong.live.api.service.IShopInfoService;
-import com.logilong.live.api.vo.req.PrepareOrderVO;
 import com.logilong.live.api.vo.req.ShopCarReqVO;
 import com.logilong.live.api.vo.req.SkuInfoReqVO;
 import com.logilong.live.common.interfaces.vo.WebResponseVO;
@@ -18,11 +18,11 @@ public class ShopInfoController {
     private IShopInfoService shopInfoService;
 
     @PostMapping("/listSkuInfo")
-    public WebResponseVO listSkuInfo(Long anchorId) {
-        return WebResponseVO.success(shopInfoService.queryByAnchorId(anchorId));
+    public WebResponseVO listSkuInfo(Integer roomId) {
+        return WebResponseVO.success(shopInfoService.queryByRoomId(roomId));
     }
 
-    @PostMapping("detail")
+    @PostMapping("/detail")
     public WebResponseVO detail(SkuInfoReqVO reqVO) {
         return WebResponseVO.success(shopInfoService.detail(reqVO));
     }
@@ -36,17 +36,17 @@ public class ShopInfoController {
     // 购物车的清空
     @PostMapping("/addCar")
     public WebResponseVO addCar(ShopCarReqVO reqVO) {
-        return WebResponseVO.success(shopInfoService.addCar(reqVO));
+        return WebResponseVO.success(shopInfoService.addShopCar(reqVO));
     }
 
     @PostMapping("/removeFromCar")
     public WebResponseVO removeFromCar(ShopCarReqVO reqVO) {
-        return WebResponseVO.success(shopInfoService.removeFromCar(reqVO));
+        return WebResponseVO.success(shopInfoService.removeFromShopCar(reqVO));
     }
 
     @PostMapping("/getCarInfo")
     public WebResponseVO getCarInfo(ShopCarReqVO reqVO) {
-        return WebResponseVO.success(shopInfoService.getCarInfo(reqVO));
+        return WebResponseVO.success(shopInfoService.getShopCarInfo(reqVO));
     }
 
     @PostMapping("/clearCar")

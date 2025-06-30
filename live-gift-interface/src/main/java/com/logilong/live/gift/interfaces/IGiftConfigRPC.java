@@ -4,7 +4,7 @@ import com.logilong.live.gift.dto.GiftConfigDTO;
 
 import java.util.List;
 
-public interface IGiftConfigRpc {
+public interface IGiftConfigRPC {
 
     /**
      * 根据id查询礼物信息

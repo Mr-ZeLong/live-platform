@@ -1,21 +1,28 @@
 package com.logilong.live.api.service.impl;
 
+import com.logilong.live.api.error.ApiErrorEnum;
+import com.logilong.live.api.vo.PrepareOrderVO;
+import com.logilong.live.api.vo.resp.ShopCarItemRespVO;
+import com.logilong.live.living.interfaces.dto.LivingRoomRespDTO;
+import com.logilong.live.living.interfaces.rpc.ILivingRoomRPC;
+import com.logilong.live.sku.dto.*;
+import com.logilong.live.sku.interfaces.IShopCarRPC;
+import com.logilong.live.sku.interfaces.ISkuInfoRPC;
+import com.logilong.live.sku.interfaces.ISkuOrderInfoRPC;
+import com.logilong.live.sku.interfaces.ISkuStockInfoRPC;
+import com.logilong.live.web.starter.error.BizBaseErrorEnum;
+import com.logilong.live.web.starter.error.ErrorAssert;
 import org.apache.dubbo.config.annotation.DubboReference;
 import com.logilong.live.api.service.IShopInfoService;
-import com.logilong.live.api.vo.req.PrepareOrderVO;
 import com.logilong.live.api.vo.req.ShopCarReqVO;
 import com.logilong.live.api.vo.req.SkuInfoReqVO;
 import com.logilong.live.api.vo.resp.ShopCarRespVO;
 import com.logilong.live.api.vo.resp.SkuDetailInfoVO;
 import com.logilong.live.api.vo.resp.SkuInfoVO;
 import com.logilong.live.common.interfaces.utils.ConvertBeanUtils;
-import com.logilong.live.gift.dto.*;
-import com.logilong.live.gift.interfaces.IShopCarRpc;
-import com.logilong.live.gift.interfaces.ISkuInfoRpc;
-import com.logilong.live.gift.interfaces.ISkuOrderInfoRpc;
-import com.logilong.live.gift.interfaces.ISkuStockInfoRpc;
 import com.logilong.live.web.starter.context.LiveRequestContext;
 import org.springframework.stereotype.Service;
+import org.springframework.util.CollectionUtils;
 
 import java.util.List;
 
@@ -23,51 +30,66 @@ import java.util.List;
 public class ShopInfoServiceImpl implements IShopInfoService {
     
     @DubboReference
-    private ISkuInfoRpc skuInfoRpc;
+    private ISkuInfoRPC skuInfoRPC;
     @DubboReference
-    private IShopCarRpc shopCarRpc;
+    private IShopCarRPC shopCarRPC;
     @DubboReference
-    private ISkuOrderInfoRpc skuOrderInfoRpc;
+    private ISkuOrderInfoRPC skuOrderInfoRPC;
     @DubboReference
-    private ISkuStockInfoRpc skuStockInfoRpc;
+    private ISkuStockInfoRPC skuStockInfoRPC;
+    @DubboReference
+    private ILivingRoomRPC livingRoomRPC;
 
     @Override
-    public List<SkuInfoVO> queryByAnchorId(Long anchorId) {
-        List<SkuInfoDTO> skuInfoDTOS = skuInfoRpc.queryByAnchorId(anchorId);
-        return ConvertBeanUtils.convertList(skuInfoDTOS, SkuInfoVO.class);
+    public List<SkuInfoVO> queryByRoomId(Integer roomId) {
+        LivingRoomRespDTO livingRoomRespDTO = livingRoomRPC.queryByRoomId(roomId);
+        ErrorAssert.isNotNull(livingRoomRespDTO, BizBaseErrorEnum.PARAM_ERROR);
+        List<SkuInfoDTO> skuInfoDTOList = skuInfoRPC.queryByAnchorId(livingRoomRespDTO.getAnchorId());
+        ErrorAssert.isTure(!CollectionUtils.isEmpty(skuInfoDTOList), BizBaseErrorEnum.PARAM_ERROR);
+        return ConvertBeanUtils.convertList(skuInfoDTOList, SkuInfoVO.class);
     }
 
     @Override
     public SkuDetailInfoVO detail(SkuInfoReqVO skuInfoReqVO) {
-        return ConvertBeanUtils.convert(skuInfoRpc.queryBySkuId(skuInfoReqVO.getSkuId(), skuInfoReqVO.getAnchorId()), SkuDetailInfoVO.class);
+        return ConvertBeanUtils.convert(skuInfoRPC.queryBySkuId(skuInfoReqVO.getSkuId()), SkuDetailInfoVO.class);
     }
 
     @Override
-    public Boolean addCar(ShopCarReqVO reqVO) {
-        return shopCarRpc.addCar(new ShopCarReqDTO(LiveRequestContext.getUserId(), reqVO.getSkuId(), reqVO.getRoomId()));
+    public Boolean addShopCar(ShopCarReqVO reqVO) {
+        ShopCarReqDTO reqDTO = ConvertBeanUtils.convert(reqVO, ShopCarReqDTO.class);
+        reqDTO.setUserId(LiveRequestContext.getUserId());
+        return shopCarRPC.addShopCar(reqDTO);
     }
 
     @Override
-    public Boolean removeFromCar(ShopCarReqVO reqVO) {
-        return shopCarRpc.removeFromCar(new ShopCarReqDTO(LiveRequestContext.getUserId(), reqVO.getSkuId(), reqVO.getRoomId()));
+    public Boolean removeFromShopCar(ShopCarReqVO reqVO) {
+        ShopCarReqDTO reqDTO = ConvertBeanUtils.convert(reqVO, ShopCarReqDTO.class);
+        reqDTO.setUserId(LiveRequestContext.getUserId());
+        return shopCarRPC.removeFromShopCar(reqDTO);
     }
 
     @Override
     public Boolean clearShopCar(ShopCarReqVO reqVO) {
-        return shopCarRpc.clearShopCar(new ShopCarReqDTO(LiveRequestContext.getUserId(), reqVO.getSkuId(), reqVO.getRoomId()));
+        ShopCarReqDTO reqDTO = ConvertBeanUtils.convert(reqVO, ShopCarReqDTO.class);
+        reqDTO.setUserId(LiveRequestContext.getUserId());
+        return shopCarRPC.clearShopCar(reqDTO);
     }
 
     @Override
-    public Boolean addCarItemNum(ShopCarReqVO reqVO) {
-        return shopCarRpc.addCarItemNum(new ShopCarReqDTO(LiveRequestContext.getUserId(), reqVO.getSkuId(), reqVO.getRoomId()));
+    public Boolean addShopCarItemNum(ShopCarReqVO reqVO) {
+        ShopCarReqDTO reqDTO = ConvertBeanUtils.convert(reqVO, ShopCarReqDTO.class);
+        reqDTO.setUserId(LiveRequestContext.getUserId());
+        return shopCarRPC.addShopCarItemNum(reqDTO);
     }
 
     @Override
-    public ShopCarRespVO getCarInfo(ShopCarReqVO reqVO) {
-        ShopCarRespDTO carInfo = shopCarRpc.getCarInfo(new ShopCarReqDTO(LiveRequestContext.getUserId(), reqVO.getSkuId(), reqVO.getRoomId()));
-        ShopCarRespVO respVO = ConvertBeanUtils.convert(carInfo, ShopCarRespVO.class);
-        respVO.setShopCarItemRespDTOS(carInfo.getSkuCarItemRespDTODTOS());
-        return respVO;
+    public ShopCarRespVO getShopCarInfo(ShopCarReqVO reqVO) {
+        ShopCarReqDTO reqDTO = ConvertBeanUtils.convert(reqVO, ShopCarReqDTO.class);
+        reqDTO.setUserId(LiveRequestContext.getUserId());
+        ShopCarRespDTO shopCarRespDTO = shopCarRPC.getShopCarInfo(reqDTO);
+        ShopCarRespVO shopCarRespVO = ConvertBeanUtils.convert(shopCarRespDTO, ShopCarRespVO.class);
+        shopCarRespVO.setShopCarItemRespVOList(ConvertBeanUtils.convertList(shopCarRespDTO.getShopCarItemRespDTOList(), ShopCarItemRespVO.class));
+        return shopCarRespVO;
     }
 
     @Override
@@ -75,16 +97,19 @@ public class ShopInfoServiceImpl implements IShopInfoService {
         PrepareOrderReqDTO reqDTO = new PrepareOrderReqDTO();
         reqDTO.setRoomId(prepareOrderVO.getRoomId());
         reqDTO.setUserId(LiveRequestContext.getUserId());
-        return skuOrderInfoRpc.prepareOrder(reqDTO);
+        return skuOrderInfoRPC.prepareOrder(reqDTO);
     }
 
     @Override
     public boolean prepareStock(Long anchorId) {
-        return skuStockInfoRpc.prepareStockInfo(anchorId);
+        return skuStockInfoRPC.prepareStockInfo(anchorId);
     }
 
     @Override
     public boolean payNow(PrepareOrderVO prepareOrderVO) {
-        return skuOrderInfoRpc.payNow(LiveRequestContext.getUserId(), prepareOrderVO.getRoomId());
+        prepareOrderVO.setUserId(LiveRequestContext.getUserId());
+        boolean isSuccess = skuOrderInfoRPC.payNow(ConvertBeanUtils.convert(prepareOrderVO, PayNowReqDTO.class));
+        ErrorAssert.isTure(isSuccess, ApiErrorEnum.PAY_ERROR);
+        return isSuccess;
     }
 }

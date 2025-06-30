@@ -94,7 +94,7 @@ public class GiftConfigServiceImpl implements IGiftConfigService {
         List<GiftConfigPO> giftConfigPOList = giftConfigMapper.selectList(queryWrapper);
         if (!CollectionUtils.isEmpty(giftConfigPOList)) {
             List<GiftConfigDTO> resultList = ConvertBeanUtils.convertList(giftConfigPOList, GiftConfigDTO.class);
-            boolean trySetToRedis = redisTemplate.opsForValue().setIfAbsent(cacheKeyBuilder.buildGiftListLockCacheKey(),1,3,TimeUnit.SECONDS);
+            boolean trySetToRedis = Boolean.TRUE.equals(redisTemplate.opsForValue().setIfAbsent(cacheKeyBuilder.buildGiftListLockCacheKey(), 1, 3, TimeUnit.SECONDS));
             if(trySetToRedis) {
                 redisTemplate.opsForList().leftPushAll(cacheKey, resultList.toArray());
                 //大部分情况下，一个直播间的有效时间大概就是60min以上

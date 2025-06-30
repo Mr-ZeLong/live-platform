@@ -14,20 +14,20 @@ import org.springframework.stereotype.Service;
 public class HomePageServiceImpl implements IHomePageService {
 
     @DubboReference
-    private IUserRPC userRpc;
+    private IUserRPC userRPC;
     @DubboReference
-    private IUserTagRPC userTagRpc;
+    private IUserTagRPC userTagRPC;
 
     @Override
     public HomePageVO initPage(Long userId) {
-        UserDTO userDTO = userRpc.getByUserId(userId);
+        UserDTO userDTO = userRPC.getByUserId(userId);
         HomePageVO homePageVO = new HomePageVO();
         if (userDTO != null) {
             homePageVO.setAvatar(userDTO.getAvatar());
             homePageVO.setUserId(userId);
             homePageVO.setNickName(userDTO.getNickName());
             //vip用户有权利开播
-            homePageVO.setShowStartLivingBtn(userTagRpc.containTag(userId, UserTagsEnum.IS_VIP));
+            homePageVO.setShowStartLivingBtn(userTagRPC.containTag(userId, UserTagsEnum.IS_VIP));
         }
         return homePageVO;
     }

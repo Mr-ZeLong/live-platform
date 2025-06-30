@@ -7,25 +7,25 @@ public interface IShopCarRPC {
     /**
      * 查看购物车信息
      */
-    ShopCarRespDTO getCarInfo(ShopCarReqDTO reqDTO);
+    ShopCarRespDTO getShopCarInfo(ShopCarReqDTO reqDTO);
 
     /**
      * 添加商品到购物车中
      */
-    boolean addCar(ShopCarReqDTO reqDTO);
+    boolean addShopCar(ShopCarReqDTO reqDTO);
 
     /**
      * 从购物车中，删除商品
      */
-    boolean removeFromCar(ShopCarReqDTO reqDTO);
+    boolean removeFromShopCar(ShopCarReqDTO reqDTO);
 
     /**
      * 清理购物车
      */
-    boolean clearCar(ShopCarReqDTO reqDTO);
+    boolean clearShopCar(ShopCarReqDTO reqDTO);
 
     /**
      * 修改购物车中某个商品的数量
      */
-    boolean addCarItemNum(ShopCarReqDTO reqDTO);
+    boolean addShopCarItemNum(ShopCarReqDTO reqDTO);
 }

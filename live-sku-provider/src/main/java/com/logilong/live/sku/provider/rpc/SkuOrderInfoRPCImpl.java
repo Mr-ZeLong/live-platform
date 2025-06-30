@@ -62,7 +62,7 @@ public class SkuOrderInfoRPCImpl implements ISkuOrderInfoRPC {
     @Override
     public SkuPrepareOrderInfoDTO prepareOrder(PrepareOrderReqDTO reqDTO) {
         ShopCarReqDTO shopCarReqDTO = ConvertBeanUtils.convert(reqDTO, ShopCarReqDTO.class);
-        ShopCarRespDTO carInfo = shopCarService.getCarInfo(shopCarReqDTO);
+        ShopCarRespDTO carInfo = shopCarService.getShopCarInfo(shopCarReqDTO);
         List<ShopCarItemRespDTO> shopCarItemRespDTOList = carInfo.getShopCarItemRespDTOList();
         if (CollectionUtils.isEmpty(shopCarItemRespDTOList)) {
             return new SkuPrepareOrderInfoDTO();
@@ -153,7 +153,7 @@ public class SkuOrderInfoRPCImpl implements ISkuOrderInfoRPC {
         shopCarReqDTO.setRoomId(skuOrderInfoReqDTO.getRoomId());
         isSuccess = shopCarService.clearShopCar(shopCarReqDTO);
         if (!isSuccess) {
-            LOGGER.error("payNow shopCarService.clearCar() isSuccess: {}", isSuccess);
+            LOGGER.error("payNow shopCarService.clearShopCar() isSuccess: {}", isSuccess);
         }
         return true;
     }

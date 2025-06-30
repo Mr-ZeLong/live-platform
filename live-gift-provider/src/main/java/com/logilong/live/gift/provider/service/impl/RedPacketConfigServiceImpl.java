@@ -24,6 +24,7 @@ import com.logilong.live.living.interfaces.dto.LivingRoomReqDTO;
 import com.logilong.live.living.interfaces.rpc.ILivingRoomRPC;
 import org.apache.rocketmq.client.producer.MQProducer;
 import org.apache.rocketmq.client.producer.SendResult;
+import org.apache.rocketmq.client.producer.SendStatus;
 import org.apache.rocketmq.common.message.Message;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -36,6 +37,7 @@ import java.util.List;
 import java.util.UUID;
 import java.util.concurrent.ThreadLocalRandom;
 import java.util.concurrent.TimeUnit;
+import java.util.stream.Collectors;
 
 @Service
 public class RedPacketConfigServiceImpl implements IRedPacketConfigService {
@@ -49,11 +51,11 @@ public class RedPacketConfigServiceImpl implements IRedPacketConfigService {
     @Resource
     private GiftProviderCacheKeyBuilder cacheKeyBuilder;
     @DubboReference
-    private ImRouterRPC routerRpc;
+    private ImRouterRPC routerRPC;
     @DubboReference
-    private ILivingRoomRPC livingRoomRpc;
+    private ILivingRoomRPC livingRoomRPC;
     @DubboReference
-    private ILiveCurrencyAccountRPC liveCurrencyAccountRpc;
+    private ILiveCurrencyAccountRPC liveCurrencyAccountRPC;
     @Resource
     private MQProducer mqProducer;
 
@@ -61,6 +63,7 @@ public class RedPacketConfigServiceImpl implements IRedPacketConfigService {
     public RedPacketConfigPO queryByAnchorId(Long anchorId) {
         LambdaQueryWrapper<RedPacketConfigPO> queryWrapper = new LambdaQueryWrapper<>();
         queryWrapper.eq(RedPacketConfigPO::getAnchorId, anchorId);
+        // 筛选出有效的红包雨活动：未准备和已经准备且未开启的红包雨活动
         queryWrapper.ne(RedPacketConfigPO::getStatus, RedPacketStatusEnum.IS_SEND.getCode());
         queryWrapper.orderByDesc(RedPacketConfigPO::getCreateTime);
         queryWrapper.last("limit 1");
@@ -95,7 +98,7 @@ public class RedPacketConfigServiceImpl implements IRedPacketConfigService {
         if (redPacketConfigPO == null) {
             return false;
         }
-        // 加锁保证原子性：仿重
+        // 加锁保证原子性：
         Boolean isLock = redisTemplate.opsForValue().setIfAbsent(cacheKeyBuilder.buildRedPacketInitLock(redPacketConfigPO.getConfigCode()), 1, 3L, TimeUnit.SECONDS);
         if (Boolean.FALSE.equals(isLock)) {
             return false;
@@ -114,7 +117,7 @@ public class RedPacketConfigServiceImpl implements IRedPacketConfigService {
         redPacketConfigPO.setStatus(RedPacketStatusEnum.IS_PREPARED.getCode());
         this.updateById(redPacketConfigPO);
         // Redis中设置该红包雨已经准备好的标记
-        redisTemplate.opsForValue().set(cacheKeyBuilder.buildRedPacketPrepareSuccess(redPacketConfigPO.getConfigCode()), 1, 1L, TimeUnit.DAYS);
+        redisTemplate.opsForValue().set(cacheKeyBuilder.buildRedPacketPrepareSuccessCache(redPacketConfigPO.getConfigCode()), 1, 1L, TimeUnit.DAYS);
         return true;
     }
 
@@ -122,15 +125,14 @@ public class RedPacketConfigServiceImpl implements IRedPacketConfigService {
     public Boolean startRedPacket(RedPacketConfigReqDTO reqDTO) {
         String code = reqDTO.getRedPacketConfigCode();
         // 红包没有准备好，则返回false
-        if (Boolean.FALSE.equals(redisTemplate.hasKey(cacheKeyBuilder.buildRedPacketPrepareSuccess(code)))) {
+        if (Boolean.FALSE.equals(redisTemplate.hasKey(cacheKeyBuilder.buildRedPacketPrepareSuccessCache(code)))) {
             return false;
         }
         // 红包已经开始过（有别的线程正在通知用户中），返回false
-        String notifySuccessCacheKey = cacheKeyBuilder.buildRedPacketNotify(code);
+        String notifySuccessCacheKey = cacheKeyBuilder.buildRedPacketNotifyCache(code);
         if (Boolean.TRUE.equals(redisTemplate.hasKey(notifySuccessCacheKey))) {
             return false;
         }
-        redisTemplate.opsForValue().set(notifySuccessCacheKey, 1, 1L, TimeUnit.DAYS);
         // 广播通知直播间所有用户开始抢红包了
         RedPacketConfigPO redPacketConfigPO = this.queryByConfigCode(code);
         JSONObject jsonObject = new JSONObject();
@@ -139,14 +141,31 @@ public class RedPacketConfigServiceImpl implements IRedPacketConfigService {
         livingRoomReqDTO.setRoomId(reqDTO.getRoomId());
         livingRoomReqDTO.setAppId(AppIdEnum.LIVE_BIZ.getCode());
         System.out.println("请求用户列表参数：" + livingRoomReqDTO);
-        List<Long> userIdList = livingRoomRpc.queryUserIdsByRoomId(livingRoomReqDTO);
+        List<Long> userIdList = livingRoomRPC.queryUserIdsByRoomId(livingRoomReqDTO);
         System.out.println("红包通知列表：" + userIdList);
         if (CollectionUtils.isEmpty(userIdList)) return false;
-        this.batchSendImMsg(userIdList, ImMsgBizCodeEnum.RED_PACKET_CONFIG.getCode(), jsonObject);
+        this.batchSendImMsg(userIdList, ImMsgBizCodeEnum.START_RED_PACKET.getCode(), jsonObject);
         // 更改红包雨配置的状态为已发送
         redPacketConfigPO.setStatus(RedPacketStatusEnum.IS_SEND.getCode());
         this.updateById(redPacketConfigPO);
+        // 设置红包雨已经通知成功的标记
+        redisTemplate.opsForValue().set(notifySuccessCacheKey, 1, 1L, TimeUnit.DAYS);
         return true;
+    }
+
+    /**
+     * 批量发送im消息
+     */
+    private void batchSendImMsg(List<Long> userIdList, Integer bizCode, JSONObject jsonObject) {
+        List<ImMsgBody> imMsgBodies = userIdList.stream().map(userId -> {
+            ImMsgBody imMsgBody = new ImMsgBody();
+            imMsgBody.setAppId(AppIdEnum.LIVE_BIZ.getCode());
+            imMsgBody.setBizCode(bizCode);
+            imMsgBody.setData(jsonObject.toJSONString());
+            imMsgBody.setUserId(userId);
+            return imMsgBody;
+        }).collect(Collectors.toList());
+        routerRPC.batchSendMsg(imMsgBodies);
     }
 
     @Override
@@ -159,6 +178,7 @@ public class RedPacketConfigServiceImpl implements IRedPacketConfigService {
             return null;
         }
         Integer price = (Integer) priceObj;
+        LOGGER.info("[receiveRedPacket] code is {}, price is {}", code, price);
         // 发送mq消息进行异步信息的统计，以及用户余额的增加
         SendRedPacketBO sendRedPacketBO = new SendRedPacketBO();
         sendRedPacketBO.setPrice(price);
@@ -168,26 +188,30 @@ public class RedPacketConfigServiceImpl implements IRedPacketConfigService {
         message.setBody(JSON.toJSONBytes(sendRedPacketBO));
         try {
             SendResult sendResult = mqProducer.send(message);
+            if (SendStatus.SEND_OK.equals(sendResult.getSendStatus())) {
+                return new RedPacketReceiveDTO(price, "恭喜领取红包" + price + "直播币");
+            }
             LOGGER.info("[RedPacketConfigServiceImpl] send result is {}", sendResult);
         } catch (Exception e) {
             LOGGER.info("[RedPacketConfigServiceImpl] send result is error:", e);
         }
-        return new RedPacketReceiveDTO(price, "恭喜领取到红包：" + price + "直播币！");
+        return new RedPacketReceiveDTO(-1, "抱歉，红包被人抢走了，再试试？");
     }
 
     @Override
     public void receiveRedPacketHandler(RedPacketConfigReqDTO reqDTO, Integer price) {
         String code = reqDTO.getRedPacketConfigCode();
-        String totalGetCountCacheKey = cacheKeyBuilder.buildRedPacketTotalGetCount(code);
-        String totalGetPriceCacheKey = cacheKeyBuilder.buildRedPacketTotalGetPrice(code);
+        String totalGetCacheKey = cacheKeyBuilder.buildRedPacketTotalGetCache(code);
+        String totalGetPriceCacheKey = cacheKeyBuilder.buildRedPacketTotalGetPriceCache(code);
+        String userTotalGetPriceCacheKey = cacheKeyBuilder.buildUserTotalGetPriceCache(reqDTO.getUserId());
         // 记录该用户总共领取了多少金额的红包
-        redisTemplate.opsForValue().increment(cacheKeyBuilder.buildUserTotalGetPrice(reqDTO.getUserId()), price);
-        redisTemplate.opsForHash().increment(totalGetCountCacheKey, code, 1);
-        redisTemplate.expire(totalGetCountCacheKey, 1L, TimeUnit.DAYS);
+        redisTemplate.opsForHash().increment(totalGetCacheKey, code, 1);
+        redisTemplate.expire(totalGetCacheKey, 1L, TimeUnit.DAYS);
         redisTemplate.opsForHash().increment(totalGetPriceCacheKey, code, price);
         redisTemplate.expire(totalGetPriceCacheKey, 1L, TimeUnit.DAYS);
+        redisTemplate.opsForValue().increment(userTotalGetPriceCacheKey, price);
         // 往用户的余额里增加金额
-        liveCurrencyAccountRpc.incr(reqDTO.getUserId(), price);
+        liveCurrencyAccountRPC.incr(reqDTO.getUserId(), price);
         // 持久化红包雨的totalGetCount和totalGetPrice
         redPacketConfigMapper.incrTotalGetPrice(code, price);
         redPacketConfigMapper.incrTotalGetCount(code);
@@ -211,22 +235,5 @@ public class RedPacketConfigServiceImpl implements IRedPacketConfigService {
             redPacketPriceList.add(currentPrice);
         }
         return redPacketPriceList;
-    }
-
-    /**
-     * 批量发送im消息
-     */
-    private void batchSendImMsg(List<Long> userIdList, Integer bizCode, JSONObject jsonObject) {
-        List<ImMsgBody> imMsgBodies = new ArrayList<>();
-
-        userIdList.forEach(userId -> {
-            ImMsgBody imMsgBody = new ImMsgBody();
-            imMsgBody.setAppId(AppIdEnum.LIVE_BIZ.getCode());
-            imMsgBody.setBizCode(bizCode);
-            imMsgBody.setData(jsonObject.toJSONString());
-            imMsgBody.setUserId(userId);
-            imMsgBodies.add(imMsgBody);
-        });
-        routerRpc.batchSendMsg(imMsgBodies);
     }
 }

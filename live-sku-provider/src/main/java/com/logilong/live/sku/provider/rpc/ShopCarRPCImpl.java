@@ -14,28 +14,28 @@ public class ShopCarRPCImpl implements IShopCarRPC {
     private IShopCarService shopCarService;
 
     @Override
-    public ShopCarRespDTO getCarInfo(ShopCarReqDTO reqDTO) {
-        return shopCarService.getCarInfo(reqDTO);
+    public ShopCarRespDTO getShopCarInfo(ShopCarReqDTO reqDTO) {
+        return shopCarService.getShopCarInfo(reqDTO);
     }
 
     @Override
-    public boolean addCar(ShopCarReqDTO reqDTO) {
-        return shopCarService.addCar(reqDTO);
+    public boolean addShopCar(ShopCarReqDTO reqDTO) {
+        return shopCarService.addShopCar(reqDTO);
     }
 
     @Override
-    public boolean removeFromCar(ShopCarReqDTO reqDTO) {
-        return shopCarService.removeFromCar(reqDTO);
+    public boolean removeFromShopCar(ShopCarReqDTO reqDTO) {
+        return shopCarService.removeFromShopCar(reqDTO);
     }
 
     @Override
-    public boolean clearCar(ShopCarReqDTO reqDTO) {
+    public boolean clearShopCar(ShopCarReqDTO reqDTO) {
         return shopCarService.clearShopCar(reqDTO);
     }
 
     @Override
-    public boolean addCarItemNum(ShopCarReqDTO reqDTO) {
-        return shopCarService.addCarItemNum(reqDTO);
+    public boolean addShopCarItemNum(ShopCarReqDTO reqDTO) {
+        return shopCarService.addShopCarItemNum(reqDTO);
     }
 
 }

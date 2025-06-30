@@ -8,12 +8,12 @@ public interface IShopCarService {
     /**
      * 添加商品到购物车中
      */
-    Boolean addCar(ShopCarReqDTO shopCarReqDTO);
+    Boolean addShopCar(ShopCarReqDTO shopCarReqDTO);
 
     /**
      * 移除购物车
      */
-    Boolean removeFromCar(ShopCarReqDTO shopCarReqDTO);
+    Boolean removeFromShopCar(ShopCarReqDTO shopCarReqDTO);
 
     /**
      * 清空购物车
@@ -23,10 +23,10 @@ public interface IShopCarService {
     /**
      * 修改购物车中某个商品的数量
      */
-    Boolean addCarItemNum(ShopCarReqDTO shopCarReqDTO);
+    Boolean addShopCarItemNum(ShopCarReqDTO shopCarReqDTO);
 
     /**
      * 查看购物车信息
      */
-    ShopCarRespDTO getCarInfo(ShopCarReqDTO shopCarReqDTO);
+    ShopCarRespDTO getShopCarInfo(ShopCarReqDTO shopCarReqDTO);
 }

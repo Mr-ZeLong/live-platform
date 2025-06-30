@@ -3,13 +3,13 @@ package com.logilong.live.gift.provider.rpc;
 import jakarta.annotation.Resource;
 import org.apache.dubbo.config.annotation.DubboService;
 import com.logilong.live.gift.dto.GiftConfigDTO;
-import com.logilong.live.gift.interfaces.IGiftConfigRpc;
+import com.logilong.live.gift.interfaces.IGiftConfigRPC;
 import com.logilong.live.gift.provider.service.IGiftConfigService;
 
 import java.util.List;
 
 @DubboService
-public class GiftConfigRpcImpl implements IGiftConfigRpc {
+public class GiftConfigRPCImpl implements IGiftConfigRPC {
 
     @Resource
     private IGiftConfigService giftConfigService;

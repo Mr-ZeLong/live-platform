@@ -21,8 +21,6 @@ public class GiftController {
 
     /**
      * 获取礼物列表
-     *
-     * @return
      */
     @PostMapping("/listGift")
     public WebResponseVO listGift() {
@@ -32,10 +30,7 @@ public class GiftController {
     }
 
     /**
-     * 发送礼物方法
-     * 具体实现在后边的章节会深入讲解
-     *
-     * @return
+     * 发送礼物
      */
     @PostMapping("/send")
     public WebResponseVO send(GiftReqVO giftReqVO) {

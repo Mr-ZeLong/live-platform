@@ -17,6 +17,7 @@ import com.logilong.live.user.interfaces.IUserPhoneRPC;
 import com.logilong.live.web.starter.error.ErrorAssert;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.util.regex.Pattern;
@@ -26,20 +27,21 @@ import java.util.regex.Pattern;
 public class UserLoginServiceImpl implements IUserLoginService {
 
     private static final String PHONE_REG = "^(13[0-9]|14[01456879]|15[0-35-9]|16[2567]|17[0-8]|18[0-9]|19[0-35-9])\\d{8}$";
-    private static final Logger LOGGER = LoggerFactory.getLogger(UserLoginServiceImpl.class);
 
     @DubboReference
-    private ISmsRPC smsRpc;
+    private ISmsRPC smsRPC;
     @DubboReference
     private IUserPhoneRPC userPhoneRPC;
     @DubboReference
     private IAccountTokenRPC accountTokenRPC;
+    @Value("${web.domain}")
+    private String webDomain;
 
     @Override
     public WebResponseVO sendLoginCode(String phone) {
         ErrorAssert.isNotBlank(phone, ApiErrorEnum.PHONE_IS_EMPTY);
         ErrorAssert.isTure(Pattern.matches(PHONE_REG, phone), ApiErrorEnum.PHONE_IN_VALID);
-        MsgSendResultEnum msgSendResultEnum = smsRpc.sendLoginCode(phone);
+        MsgSendResultEnum msgSendResultEnum = smsRPC.sendLoginCode(phone);
         if (msgSendResultEnum == MsgSendResultEnum.SEND_SUCCESS) {
             return WebResponseVO.success();
         }
@@ -51,7 +53,7 @@ public class UserLoginServiceImpl implements IUserLoginService {
         ErrorAssert.isNotBlank(phone, ApiErrorEnum.PHONE_IS_EMPTY);
         ErrorAssert.isTure(Pattern.matches(PHONE_REG, phone), ApiErrorEnum.PHONE_IN_VALID);
         ErrorAssert.isTure(code != null && code > 1000, ApiErrorEnum.SMS_CODE_ERROR);
-        MsgCheckDTO msgCheckDTO = smsRpc.checkLoginCode(phone, code);
+        MsgCheckDTO msgCheckDTO = smsRPC.checkLoginCode(phone, code);
         if (!msgCheckDTO.isCheckStatus()) {
             return WebResponseVO.bizError(msgCheckDTO.getDesc());
         }
@@ -63,7 +65,7 @@ public class UserLoginServiceImpl implements IUserLoginService {
         Cookie cookie = new Cookie("livetk", token);
         //http://app.qiyu.live.com/html/qiyu_live_list_room.html
         //http://api.qiyu.live.com/live/api/userLogin/sendLoginCode
-        cookie.setDomain("live.com");
+        cookie.setDomain(webDomain); // live.com
         cookie.setPath("/");
         //cookie有效期，一般他的默认单位是秒
         cookie.setMaxAge(30 * 24 * 3600);

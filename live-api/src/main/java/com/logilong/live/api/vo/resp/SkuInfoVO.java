@@ -4,7 +4,7 @@ import lombok.Data;
 
 @Data
 public class SkuInfoVO {
-
+    private Long id;
     private Long skuId;
     private Integer skuPrice;
     private String skuCode;
@@ -12,4 +12,6 @@ public class SkuInfoVO {
     private String iconUrl;
     private String originalIconUrl;
     private String remark;
+    private Byte status;
+    private Long categoryId;
 }

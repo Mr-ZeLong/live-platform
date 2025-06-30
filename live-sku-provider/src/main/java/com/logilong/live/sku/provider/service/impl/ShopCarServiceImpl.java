@@ -34,35 +34,35 @@ public class ShopCarServiceImpl implements IShopCarService {
      * 因为是以直播间为维度的购物车，所以不需要持久化，用缓存即可
      */
     @Override
-    public Boolean addCar(ShopCarReqDTO shopCarReqDTO) {
-        String cacheKey = cacheKeyBuilder.buildShopCar(shopCarReqDTO.getUserId(), shopCarReqDTO.getRoomId());
+    public Boolean addShopCar(ShopCarReqDTO shopCarReqDTO) {
+        String cacheKey = cacheKeyBuilder.buildShopCar(shopCarReqDTO.getUserId(), Long.valueOf(shopCarReqDTO.getRoomId()));
         redisTemplate.opsForHash().put(cacheKey, String.valueOf(shopCarReqDTO.getSkuId()), 1);
         return true;
     }
 
     @Override
-    public Boolean removeFromCar(ShopCarReqDTO shopCarReqDTO) {
-        String cacheKey = cacheKeyBuilder.buildShopCar(shopCarReqDTO.getUserId(), shopCarReqDTO.getRoomId());
+    public Boolean removeFromShopCar(ShopCarReqDTO shopCarReqDTO) {
+        String cacheKey = cacheKeyBuilder.buildShopCar(shopCarReqDTO.getUserId(), Long.valueOf(shopCarReqDTO.getRoomId()));
         redisTemplate.opsForHash().delete(cacheKey, String.valueOf(shopCarReqDTO.getSkuId()));
         return true;
     }
 
     @Override
     public Boolean clearShopCar(ShopCarReqDTO shopCarReqDTO) {
-        String cacheKey = cacheKeyBuilder.buildShopCar(shopCarReqDTO.getUserId(), shopCarReqDTO.getRoomId());
+        String cacheKey = cacheKeyBuilder.buildShopCar(shopCarReqDTO.getUserId(), Long.valueOf(shopCarReqDTO.getRoomId()));
         redisTemplate.delete(cacheKey);
         return true;
     }
 
     @Override
-    public Boolean addCarItemNum(ShopCarReqDTO shopCarReqDTO) {
-        String cacheKey = cacheKeyBuilder.buildShopCar(shopCarReqDTO.getUserId(), shopCarReqDTO.getRoomId());
+    public Boolean addShopCarItemNum(ShopCarReqDTO shopCarReqDTO) {
+        String cacheKey = cacheKeyBuilder.buildShopCar(shopCarReqDTO.getUserId(), Long.valueOf(shopCarReqDTO.getRoomId()));
         redisTemplate.opsForHash().increment(cacheKey, String.valueOf(shopCarReqDTO.getSkuId()), 1);
         return true;
     }
 
-    public ShopCarRespDTO getCarInfo(ShopCarReqDTO reqDTO) {
-        String cacheKey = cacheKeyBuilder.buildShopCar(reqDTO.getUserId(), reqDTO.getRoomId());
+    public ShopCarRespDTO getShopCarInfo(ShopCarReqDTO reqDTO) {
+        String cacheKey = cacheKeyBuilder.buildShopCar(reqDTO.getUserId(), Long.valueOf(reqDTO.getRoomId()));
         Cursor<Map.Entry<Object, Object>> cursor = redisTemplate.opsForHash().scan(cacheKey, ScanOptions.scanOptions().match("*").build());
         Map<Long, Integer> shopCarItemCountMap = new HashMap<>();
         while (cursor.hasNext()) {
@@ -81,7 +81,7 @@ public class ShopCarServiceImpl implements IShopCarService {
         }
         ShopCarRespDTO shopCarRespDTO = new ShopCarRespDTO();
         shopCarRespDTO.setUserId(reqDTO.getUserId());
-        shopCarRespDTO.setRoomId(reqDTO.getRoomId());
+        shopCarRespDTO.setRoomId(Long.valueOf(reqDTO.getRoomId()));
         shopCarRespDTO.setTotalPrice(totalPrice);
         shopCarRespDTO.setShopCarItemRespDTOList(shopCarItemRespDTOList);
         return shopCarRespDTO;

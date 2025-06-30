@@ -17,25 +17,10 @@ import java.util.HashSet;
 @SpringBootApplication
 @EnableDubbo
 @EnableDiscoveryClient
-public class IdGenerateApplication implements CommandLineRunner {
-
-    private static final Logger log = LoggerFactory.getLogger(IdGenerateApplication.class);
-
-    @Resource
-    private IdGenerateService idGenerateService;
+public class IdGenerateApplication{
     public static void main(String[] args) {
         SpringApplication springApplication = new SpringApplication(IdGenerateApplication.class);
         springApplication.setWebApplicationType(WebApplicationType.NONE);
         springApplication.run(args);
-    }
-
-    @Override
-    public void run(String... args) throws Exception {
-        HashSet<Long> idSet = new HashSet<>();
-        for(int i = 0; i < 600; i++){
-            Long seqId = idGenerateService.getSeqId(IdTypeEnum.USER_ID.getCode());
-            idSet.add(seqId);
-        }
-        log.info("idSet.size:{}", idSet.size());
     }
 }

@@ -4,7 +4,7 @@ import lombok.Data;
 
 @Data
 public class SkuDetailInfoVO {
-
+    private Long id;
     private Long skuId;
     private Integer skuPrice;
     private String skuCode;

@@ -110,6 +110,11 @@
             <artifactId>live-bank-interface</artifactId>
             <version>${project.version}</version>
         </dependency>
+        <dependency>
+            <groupId>com.logilong</groupId>
+            <artifactId>live-sku-interface</artifactId>
+            <version>${project.version}</version>
+        </dependency>
 
     </dependencies>
 
