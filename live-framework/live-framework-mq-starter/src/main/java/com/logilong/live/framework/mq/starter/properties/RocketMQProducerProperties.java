@@ -14,4 +14,5 @@ public class RocketMQProducerProperties {
     private String applicationName;
     private Integer sendMsgTimeout;
     private Integer retryTimes;
+
 }
