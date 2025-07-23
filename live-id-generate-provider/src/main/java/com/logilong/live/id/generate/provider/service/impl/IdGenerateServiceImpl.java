@@ -165,7 +165,6 @@ public class IdGenerateServiceImpl implements IdGenerateService, InitializingBea
      * 更新mysql里面的分布式id的配置信息，占用相应的id段
      * 同步执行，很多的网络IO，性能较慢
      *
-     * @param idGeneratePO
      */
     private void tryUpdateMySQLRecord(IdGeneratePO idGeneratePO) {
         int updateResult = idGenerateMapper.updateNewIdCountAndVersion(idGeneratePO.getId(), idGeneratePO.getVersion());
@@ -187,16 +186,13 @@ public class IdGenerateServiceImpl implements IdGenerateService, InitializingBea
 
     /**
      * 专门处理如何将本地ID对象放入到Map中，并且进行初始化的
-     *
-     * @param idGeneratePO
      */
     private void localIdBOHandler(IdGeneratePO idGeneratePO) {
         long currentStart = idGeneratePO.getCurrentStart();
         long nextThreshold = idGeneratePO.getNextThreshold();
-        long currentNum = currentStart;
         if (idGeneratePO.getIsSeq() == SEQ_ID) {
             LocalSeqIdBO localSeqIdBO = new LocalSeqIdBO();
-            AtomicLong atomicLong = new AtomicLong(currentNum);
+            AtomicLong atomicLong = new AtomicLong(currentStart);
             localSeqIdBO.setId(idGeneratePO.getId());
             localSeqIdBO.setCurrentNum(atomicLong);
             localSeqIdBO.setCurrentStart(currentStart);
