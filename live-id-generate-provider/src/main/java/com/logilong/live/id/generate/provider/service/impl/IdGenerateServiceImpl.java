@@ -26,25 +26,22 @@ public class IdGenerateServiceImpl implements IdGenerateService, InitializingBea
     private IdGenerateMapper idGenerateMapper;
 
     private static final Logger LOGGER = LoggerFactory.getLogger(IdGenerateServiceImpl.class);
-    private static Map<Integer, LocalSeqIdBO> localSeqIdBOMap = new ConcurrentHashMap<>();
-    private static Map<Integer, LocalUnSeqIdBO> localUnSeqIdBOMap = new ConcurrentHashMap<>();
-    private static ThreadPoolExecutor threadPoolExecutor = new ThreadPoolExecutor(8, 16, 3, TimeUnit.SECONDS, new ArrayBlockingQueue<>(1000),
-            new ThreadFactory() {
-                @Override
-                public Thread newThread(Runnable r) {
-                    Thread thread = new Thread(r);
-                    thread.setName("id-generate-thread-" + ThreadLocalRandom.current().nextInt(1000));
-                    return thread;
-                }
+    private static final Map<Integer, LocalSeqIdBO> localSeqIdBOMap = new ConcurrentHashMap<>();
+    private static final Map<Integer, LocalUnSeqIdBO> localUnSeqIdBOMap = new ConcurrentHashMap<>();
+    private static final ThreadPoolExecutor threadPoolExecutor = new ThreadPoolExecutor(8, 16, 3, TimeUnit.SECONDS, new ArrayBlockingQueue<>(1000),
+            r -> {
+                Thread thread = new Thread(r);
+                thread.setName("id-generate-thread-" + ThreadLocalRandom.current().nextInt(1000));
+                return thread;
             });
     private static final float UPDATE_RATE = 0.75f;
     private static final int SEQ_ID = 1;
-    private static Map<Integer, Semaphore> semaphoreMap = new ConcurrentHashMap<>();
+    private static final Map<Integer, Semaphore> semaphoreMap = new ConcurrentHashMap<>();
 
     @Override
     public Long getUnSeqId(Integer id) {
         if (id == null) {
-            LOGGER.error("[getSeqId] id is error,id is {}", id);
+            LOGGER.error("[getSeqId] id is error,id is {}", (Object) null);
             return null;
         }
         LocalUnSeqIdBO localUnSeqIdBO = localUnSeqIdBOMap.get(id);
