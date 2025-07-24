@@ -47,27 +47,33 @@ public class UserTagServiceImpl implements IUserTagService {
             return true;
         }
         String setNxKey = cacheKeyBuilder.buildTagLockKey(userId);
-        // [5.7] 分布式并发场景下用户标签接口的优化以及初始化问题
+        // 分布式并发场景下，使用原子命令setNX指令来保证并发场景下的数据一致性，
         String setNxResult = redisTemplate.execute((RedisCallback<String>) connection -> {
             RedisSerializer keySerializer = redisTemplate.getKeySerializer();
             RedisSerializer valueSerializer = redisTemplate.getValueSerializer();
             return (String) connection.execute("set", keySerializer.serialize(setNxKey),
+                    // value 没有什么特殊意义，随便设置一个即可
                     valueSerializer.serialize("-1"),
                     "NX".getBytes(StandardCharsets.UTF_8),
                     "EX".getBytes(StandardCharsets.UTF_8),
                     "3".getBytes(StandardCharsets.UTF_8));
         });
+        // 分布式场景下，只能有一个线程获取锁，对用户标签数据进行初始化然后插入到mysql中，
+        // 其他线程直接返回false，避免大量的无效请求访问mysql数据库，降低数据库的访问压力
         if (!"OK".equals(setNxResult)) {
             return false;
         }
+        // 用户标签已经设置过，不再重复设置，直接返回false
         UserTagPO userTagPO = userTagMapper.selectById(userId);
         if (userTagPO != null) {
             return false;
         }
+        // 查询不到用户的标签数据，即没有初始化过，则创建并插入用户标签初始数据到MySQL中
         userTagPO = new UserTagPO();
         userTagPO.setUserId(userId);
         userTagMapper.insert(userTagPO);
         updateStatus = userTagMapper.setTag(userId, userTagsEnum.getFieldName(), userTagsEnum.getTag()) > 0;
+        // 释放分布式锁
         redisTemplate.delete(setNxKey);
         return updateStatus;
     }

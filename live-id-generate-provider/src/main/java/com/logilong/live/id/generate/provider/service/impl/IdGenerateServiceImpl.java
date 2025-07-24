@@ -81,43 +81,45 @@ public class IdGenerateServiceImpl implements IdGenerateService, InitializingBea
 
     /**
      * 刷新本地有序id段
-     *
-     * @param localSeqIdBO
      */
     private void refreshLocalSeqId(LocalSeqIdBO localSeqIdBO) {
         long step = localSeqIdBO.getNextThreshold() - localSeqIdBO.getCurrentStart();
         if (localSeqIdBO.getCurrentNum().get() - localSeqIdBO.getCurrentStart() > step * UPDATE_RATE) {
             Semaphore semaphore = semaphoreMap.get(localSeqIdBO.getId());
             if (semaphore == null) {
-                LOGGER.error("semaphore is null,id is {}", localSeqIdBO.getId());
+                LOGGER.warn("[refreshLocalSeqId] semaphore is null, id: {}", localSeqIdBO.getId());
                 return;
             }
+            // 尝试获取信号量（非阻塞，直接返回获取结果）
             boolean acquireStatus = semaphore.tryAcquire();
             if (acquireStatus) {
-                LOGGER.info("开始尝试进行本地id段的同步操作");
-                //异步进行同步id段操作
-                threadPoolExecutor.execute(new Runnable() {
-                    @Override
-                    public void run() {
-                        try {
-                            IdGeneratePO idGeneratePO = idGenerateMapper.selectById(localSeqIdBO.getId());
-                            tryUpdateMySQLRecord(idGeneratePO);
-                        } catch (Exception e) {
-                            LOGGER.error("[refreshLocalSeqId] error is ", e);
-                        } finally {
-                            semaphoreMap.get(localSeqIdBO.getId()).release();
-                            LOGGER.info("本地有序id段同步完成,id is {}", localSeqIdBO.getId());
+                LOGGER.info("[refreshLocalSeqId] start to refresh local seq id segment, id: {}", localSeqIdBO.getId());
+                // 异步进行id段刷新操作
+                threadPoolExecutor.execute(() -> {
+                    try {
+                        // 双重检查：在获取信号量后再次检查是否仍需要刷新
+                        // 如果获取到的本地无序id段对象与当前对象不一致，则说明该id段已被刷新，现在该id存放的id段对象是刷新后的对象，不需要再次刷新
+                        if(localSeqIdBOMap.get(localSeqIdBO.getId()) != localSeqIdBO){
+                            LOGGER.debug("[refreshLocalUnSeqId] seq id segment has been refreshed, no need to refresh it again after acquiring semaphore, id: {}", localSeqIdBO.getId());
+                            return;
                         }
+                        IdGeneratePO idGeneratePO = idGenerateMapper.selectById(localSeqIdBO.getId());
+                        tryUpdateMySQLRecord(idGeneratePO);
+                        LOGGER.info("[refreshLocalSeqId] successfully refreshed local seq id segment, id: {}", localSeqIdBO.getId());
+                    } catch (Exception e) {
+                        LOGGER.error("[refreshLocalSeqId] error occurred while refreshing local seq id segment, id: {}", localSeqIdBO.getId(), e);
+                    } finally {
+                        semaphoreMap.get(localSeqIdBO.getId()).release();
                     }
                 });
+            } else {
+                LOGGER.debug("[refreshLocalSeqId] failed to acquire semaphore, another thread is refreshing id segment, id: {}", localSeqIdBO.getId());
             }
         }
     }
 
     /**
      * 刷新本地无序id段
-     *
-     * @param localUnSeqIdBO
      */
     private void refreshLocalUnSeqId(LocalUnSeqIdBO localUnSeqIdBO) {
         long begin = localUnSeqIdBO.getCurrentStart();
@@ -127,25 +129,33 @@ public class IdGenerateServiceImpl implements IdGenerateService, InitializingBea
         if ((end - begin) * 0.25 > remainSize) {
             Semaphore semaphore = semaphoreMap.get(localUnSeqIdBO.getId());
             if (semaphore == null) {
-                LOGGER.error("semaphore is null,id is {}", localUnSeqIdBO.getId());
+                LOGGER.warn("[refreshLocalUnSeqId] semaphore is null, id: {}", localUnSeqIdBO.getId());
                 return;
             }
             boolean acquireStatus = semaphore.tryAcquire();
             if (acquireStatus) {
-                threadPoolExecutor.execute(new Runnable() {
-                    @Override
-                    public void run() {
-                        try {
-                            IdGeneratePO idGeneratePO = idGenerateMapper.selectById(localUnSeqIdBO.getId());
-                            tryUpdateMySQLRecord(idGeneratePO);
-                        } catch (Exception e) {
-                            LOGGER.error("[refreshLocalUnSeqId] error is ", e);
-                        } finally {
-                            semaphoreMap.get(localUnSeqIdBO.getId()).release();
-                            LOGGER.info("本地无序id段同步完成，id is {}", localUnSeqIdBO.getId());
+                LOGGER.info("[refreshLocalUnSeqId] start to refresh local unseq id segment, id: {}", localUnSeqIdBO.getId());
+                threadPoolExecutor.execute(() -> {
+                    try {
+                        // 双重检查：在获取信号量后再次检查是否仍需要刷新
+                        // 如果获取到的本地无序id段对象与当前对象不一致，则说明该id段已被刷新，现在该id存放的id段对象是刷新后的对象，不需要再次刷新
+                        if(localUnSeqIdBOMap.get(localUnSeqIdBO.getId()) != localUnSeqIdBO) {
+                            LOGGER.debug("[refreshLocalUnSeqId] unseq id segment has been refreshed, no need to refresh it again after acquiring semaphore, id: {}", localUnSeqIdBO.getId());
+                            return;
                         }
+                        // 正常刷新
+                        IdGeneratePO idGeneratePO = idGenerateMapper.selectById(localUnSeqIdBO.getId());
+                        tryUpdateMySQLRecord(idGeneratePO);
+                        LOGGER.info("[refreshLocalUnSeqId] successfully refreshed local unseq id segment, id: {}", localUnSeqIdBO.getId());
+                    } catch (Exception e) {
+                        LOGGER.error("[refreshLocalUnSeqId] error occurred while refreshing local unseq id segment, id: {}", localUnSeqIdBO.getId(), e);
+                    } finally {
+                        // 释放信号量
+                        semaphoreMap.get(localUnSeqIdBO.getId()).release();
                     }
                 });
+            } else {
+                LOGGER.debug("[refreshLocalUnSeqId] failed to acquire semaphore, another thread is refreshing id segment, id: {}", localUnSeqIdBO.getId());
             }
         }
     }
@@ -164,7 +174,6 @@ public class IdGenerateServiceImpl implements IdGenerateService, InitializingBea
     /**
      * 更新mysql里面的分布式id的配置信息，占用相应的id段
      * 同步执行，很多的网络IO，性能较慢
-     *
      */
     private void tryUpdateMySQLRecord(IdGeneratePO idGeneratePO) {
         int updateResult = idGenerateMapper.updateNewIdCountAndVersion(idGeneratePO.getId(), idGeneratePO.getVersion());
@@ -172,7 +181,7 @@ public class IdGenerateServiceImpl implements IdGenerateService, InitializingBea
             localIdBOHandler(idGeneratePO);
             return;
         }
-        //重试进行更新
+        //重试进行更新，最多重试3次
         for (int i = 0; i < 3; i++) {
             idGeneratePO = idGenerateMapper.selectById(idGeneratePO.getId());
             updateResult = idGenerateMapper.updateNewIdCountAndVersion(idGeneratePO.getId(), idGeneratePO.getVersion());
@@ -211,8 +220,7 @@ public class IdGenerateServiceImpl implements IdGenerateService, InitializingBea
             }
             //将本地id段提前打乱，然后放入到队列中
             Collections.shuffle(idList);
-            ConcurrentLinkedQueue<Long> idQueue = new ConcurrentLinkedQueue<>();
-            idQueue.addAll(idList);
+            ConcurrentLinkedQueue<Long> idQueue = new ConcurrentLinkedQueue<>(idList);
             localUnSeqIdBO.setIdQueue(idQueue);
             localUnSeqIdBOMap.put(localUnSeqIdBO.getId(), localUnSeqIdBO);
         }
