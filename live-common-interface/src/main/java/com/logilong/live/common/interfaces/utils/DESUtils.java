@@ -1,10 +1,7 @@
 package com.logilong.live.common.interfaces.utils;
 
-import java.security.InvalidKeyException;
 import java.security.Key;
-import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
-import java.security.spec.InvalidKeySpecException;
 
 import javax.crypto.Cipher;
 import javax.crypto.SecretKey;
@@ -27,10 +24,6 @@ public class DESUtils {
      *
      * @param keyStr 密钥字符串
      * @return 密钥对象
-     * @throws InvalidKeyException
-     * @throws NoSuchAlgorithmException
-     * @throws InvalidKeySpecException
-     * @throws Exception
      */
     private static SecretKey keyGenerator(String keyStr) throws Exception {
         byte input[] = HexString2Bytes(keyStr);
@@ -105,7 +98,7 @@ public class DESUtils {
     }
 
     public static void main(String[] args) throws Exception {
-        String phone = "17889289032";
+        String phone = "16607527746";
         String encryptStr = DESUtils.encrypt(phone);
         String decryStr = DESUtils.decrypt(encryptStr);
         System.out.println(encryptStr);

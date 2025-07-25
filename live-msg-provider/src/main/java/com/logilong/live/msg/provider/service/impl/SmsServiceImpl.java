@@ -145,8 +145,6 @@ public class SmsServiceImpl implements ISmsService {
         } catch (Exception e) {
             logger.error("[sendSmsToCCP] error is ", e);
             throw new RuntimeException(e);
-        } finally {
-            return false;
         }
     }
 

@@ -2,6 +2,7 @@ package com.logilong.live.user.provider.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import jakarta.annotation.Resource;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.dubbo.config.annotation.DubboReference;
 import com.logilong.live.framework.redis.starter.key.UserProviderCacheKeyBuilder;
@@ -19,15 +20,18 @@ import com.logilong.live.user.provider.service.IUserPhoneService;
 import com.logilong.live.user.provider.service.IUserService;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
 
 @Service
+@Slf4j
 public class UserPhoneServiceImpl implements IUserPhoneService {
 
     @Resource
@@ -40,6 +44,8 @@ public class UserPhoneServiceImpl implements IUserPhoneService {
     private IUserService userService;
     @DubboReference
     private IdGenerateRPC idGenerateRpc;
+    @Resource
+    private UserPhoneServiceImpl userPhoneServiceImpl;
 
     @Override
     public UserLoginDTO login(String phone) {
@@ -51,26 +57,41 @@ public class UserPhoneServiceImpl implements IUserPhoneService {
         UserPhoneDTO userPhoneDTO = this.queryByPhone(phone);
         //如果注册过，创建token，返回userId
         if (userPhoneDTO != null) {
-            return UserLoginDTO.loginSuccess(userPhoneDTO.getUserId());
+            //这里token创建使用新模块代替
+            return UserLoginDTO.loginSuccess(userPhoneDTO.getUserId(), createAndSaveLoginToken(userPhoneDTO.getUserId()));
         }
         //如果没注册过，生成user信息，插入手机记录，绑定userId
-        return registerAndLogin(phone);
+        return userPhoneServiceImpl.registerAndLogin(phone);
     }
 
     /**
      * 注册 + 登录
-     *
-     * @param phone
      */
-    private UserLoginDTO registerAndLogin(String phone) {
-        Long userId = idGenerateRpc.getSeqId(IdTypeEnum.USER_ID.getCode());
-        UserDTO userDTO = new UserDTO();
-        userDTO.setNickName("旗鱼用户-" + userId);
-        userDTO.setUserId(userId);
-        userService.insertOne(userDTO);
-        insertUserPhone(phone, userId);
-        redisTemplate.delete(cacheKeyBuilder.buildUserPhoneObjKey(phone));
-        return UserLoginDTO.loginSuccess(userId);
+    @Transactional(rollbackFor = Exception.class)
+    protected UserLoginDTO registerAndLogin(String phone) {
+        try {
+            // 通过分布式ID生成器获取userId
+            Long userId = idGenerateRpc.getSeqId(IdTypeEnum.USER_ID.getCode());
+            UserDTO userDTO = new UserDTO();
+            userDTO.setNickName("直播平台用户-" + userId);
+            userDTO.setUserId(userId);
+            userService.insertOne(userDTO);
+            insertUserPhone(phone, userId);
+            // 如果有空值缓存，则删除，因为查询的时候有可能缓存了空值对象
+            redisTemplate.delete(cacheKeyBuilder.buildUserPhoneObjKey(phone));
+            return UserLoginDTO.loginSuccess(userId, createAndSaveLoginToken(userId));
+        } catch (Exception e) {
+            // 记录日志
+            log.error("用户注册登录失败，手机号:{}", phone, e);
+            throw e; // 重新抛出异常以触发事务回滚
+        }
+    }
+
+    private String createAndSaveLoginToken(Long userId) {
+        String token = UUID.randomUUID().toString();
+        String redisKey = cacheKeyBuilder.buildUserLoginTokenKey(token);
+        redisTemplate.opsForValue().set(redisKey, userId, 30L, TimeUnit.DAYS);
+        return token;
     }
 
     @Override
@@ -125,7 +146,7 @@ public class UserPhoneServiceImpl implements IUserPhoneService {
         }
         List<UserPhoneDTO> userPhoneDTOS = this.queryByUserIdFromDB(userId);
         if (!CollectionUtils.isEmpty(userPhoneDTOS)) {
-            userPhoneDTOS.stream().forEach(x -> x.setPhone(DESUtils.decrypt(x.getPhone())));
+            userPhoneDTOS.forEach(x -> x.setPhone(DESUtils.decrypt(x.getPhone())));
             redisTemplate.opsForList().leftPushAll(redisKey, userPhoneDTOS.toArray());
             redisTemplate.expire(redisKey, 30, TimeUnit.MINUTES);
             return userPhoneDTOS;
@@ -138,9 +159,6 @@ public class UserPhoneServiceImpl implements IUserPhoneService {
 
     /**
      * 根据用户id查询记录
-     *
-     * @param userId
-     * @return
      */
     private List<UserPhoneDTO> queryByUserIdFromDB(Long userId) {
         LambdaQueryWrapper<UserPhonePO> queryWrapper = new LambdaQueryWrapper<>();
@@ -152,9 +170,6 @@ public class UserPhoneServiceImpl implements IUserPhoneService {
 
     /**
      * 根据手机号查询记录
-     *
-     * @param phone
-     * @return
      */
     private UserPhoneDTO queryByPhoneFromDB(String phone) {
         LambdaQueryWrapper<UserPhonePO> queryWrapper = new LambdaQueryWrapper<>();

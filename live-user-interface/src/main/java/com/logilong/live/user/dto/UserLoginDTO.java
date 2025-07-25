@@ -13,6 +13,7 @@ public class UserLoginDTO implements Serializable {
     private boolean isLoginSuccess;
     private String desc;
     private Long userId;
+    private String token;
 
     public static UserLoginDTO loginError(String desc) {
         UserLoginDTO userLoginDTO = new UserLoginDTO();
@@ -21,10 +22,11 @@ public class UserLoginDTO implements Serializable {
         return userLoginDTO;
     }
 
-    public static UserLoginDTO loginSuccess(Long userId) {
+    public static UserLoginDTO loginSuccess(Long userId, String token) {
         UserLoginDTO userLoginDTO = new UserLoginDTO();
         userLoginDTO.setLoginSuccess(true);
         userLoginDTO.setUserId(userId);
+        userLoginDTO.setToken(token);
         return userLoginDTO;
     }
 }
