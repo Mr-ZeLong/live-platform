@@ -58,7 +58,7 @@ public class UserPhoneServiceImpl implements IUserPhoneService {
         //如果注册过，创建token，返回userId
         if (userPhoneDTO != null) {
             //这里token创建使用新模块代替
-            return UserLoginDTO.loginSuccess(userPhoneDTO.getUserId(), createAndSaveLoginToken(userPhoneDTO.getUserId()));
+            return UserLoginDTO.loginSuccess(userPhoneDTO.getUserId());
         }
         //如果没注册过，生成user信息，插入手机记录，绑定userId
         return userPhoneServiceImpl.registerAndLogin(phone);
@@ -79,7 +79,7 @@ public class UserPhoneServiceImpl implements IUserPhoneService {
             insertUserPhone(phone, userId);
             // 如果有空值缓存，则删除，因为查询的时候有可能缓存了空值对象
             redisTemplate.delete(cacheKeyBuilder.buildUserPhoneObjKey(phone));
-            return UserLoginDTO.loginSuccess(userId, createAndSaveLoginToken(userId));
+            return UserLoginDTO.loginSuccess(userId);
         } catch (Exception e) {
             // 记录日志
             log.error("用户注册登录失败，手机号:{}", phone, e);

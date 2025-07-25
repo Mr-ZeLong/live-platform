@@ -22,11 +22,10 @@ public class UserLoginDTO implements Serializable {
         return userLoginDTO;
     }
 
-    public static UserLoginDTO loginSuccess(Long userId, String token) {
+    public static UserLoginDTO loginSuccess(Long userId) {
         UserLoginDTO userLoginDTO = new UserLoginDTO();
         userLoginDTO.setLoginSuccess(true);
         userLoginDTO.setUserId(userId);
-        userLoginDTO.setToken(token);
         return userLoginDTO;
     }
 }

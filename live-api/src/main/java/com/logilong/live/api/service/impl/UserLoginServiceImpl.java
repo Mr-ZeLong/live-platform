@@ -2,6 +2,7 @@ package com.logilong.live.api.service.impl;
 
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletResponse;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.dubbo.config.annotation.DubboReference;
 import com.logilong.live.account.interfaces.IAccountTokenRPC;
 import com.logilong.live.api.error.ApiErrorEnum;
@@ -15,8 +16,6 @@ import com.logilong.live.msg.interfaces.ISmsRPC;
 import com.logilong.live.user.dto.UserLoginDTO;
 import com.logilong.live.user.interfaces.IUserPhoneRPC;
 import com.logilong.live.web.starter.error.ErrorAssert;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
@@ -24,6 +23,7 @@ import java.util.regex.Pattern;
 
 
 @Service
+@Slf4j
 public class UserLoginServiceImpl implements IUserLoginService {
 
     private static final String PHONE_REG = "^(13[0-9]|14[01456879]|15[0-35-9]|16[2567]|17[0-8]|18[0-9]|19[0-35-9])\\d{8}$";
@@ -35,7 +35,7 @@ public class UserLoginServiceImpl implements IUserLoginService {
     @DubboReference
     private IAccountTokenRPC accountTokenRPC;
     @Value("${web.domain}")
-    private String webDomain;
+    private String webDomain; // live.com
 
     @Override
     public WebResponseVO sendLoginCode(String phone) {
@@ -63,11 +63,12 @@ public class UserLoginServiceImpl implements IUserLoginService {
 
         String token = accountTokenRPC.createAndSaveLoginToken(userLoginDTO.getUserId());
         Cookie cookie = new Cookie("livetk", token);
-        //http://app.qiyu.live.com/html/qiyu_live_list_room.html
-        //http://api.qiyu.live.com/live/api/userLogin/sendLoginCode
-        cookie.setDomain(webDomain); // live.com
+        //http://app.live.com/html/qiyu_live_list_room.html
+        //http://api.live.com/live/api/userLogin/sendLoginCode
+        // 用于指定Cookie的有效域名范围，控制哪些域名可以访问该Cookie
+        cookie.setDomain(webDomain);
         cookie.setPath("/");
-        //cookie有效期，一般他的默认单位是秒
+        //cookie有效期，一般他的默认单位是秒，设置为30天
         cookie.setMaxAge(30 * 24 * 3600);
         //加上它，不然web浏览器不会将cookie自动记录下
         response.addCookie(cookie);
