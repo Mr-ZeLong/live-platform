@@ -68,6 +68,7 @@ public class UserLoginServiceImpl implements IUserLoginService {
         // 用于指定Cookie的有效域名范围，控制哪些域名可以访问该Cookie
         cookie.setDomain(webDomain);
         cookie.setPath("/");
+
         //cookie有效期，一般他的默认单位是秒，设置为30天
         cookie.setMaxAge(30 * 24 * 3600);
         //加上它，不然web浏览器不会将cookie自动记录下
