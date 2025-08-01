@@ -71,6 +71,7 @@ public class UserLoginServiceImpl implements IUserLoginService {
 
         //cookie有效期，一般他的默认单位是秒，设置为30天
         cookie.setMaxAge(30 * 24 * 3600);
+
         //加上它，不然web浏览器不会将cookie自动记录下
         response.addCookie(cookie);
         return WebResponseVO.success(ConvertBeanUtils.convert(userLoginDTO, UserLoginVO.class));
