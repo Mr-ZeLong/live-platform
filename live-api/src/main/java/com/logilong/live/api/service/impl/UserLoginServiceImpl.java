@@ -74,6 +74,7 @@ public class UserLoginServiceImpl implements IUserLoginService {
 
         //加上它，不然web浏览器不会将cookie自动记录下
         response.addCookie(cookie);
+        log.info("用户登录成功，用户id:{}", userLoginDTO.getUserId());
         return WebResponseVO.success(ConvertBeanUtils.convert(userLoginDTO, UserLoginVO.class));
     }
 
