@@ -63,6 +63,7 @@ public class UserLoginServiceImpl implements IUserLoginService {
 
         String token = accountTokenRPC.createAndSaveLoginToken(userLoginDTO.getUserId());
         Cookie cookie = new Cookie("livetk", token);
+
         //http://app.live.com/html/qiyu_live_list_room.html
         //http://api.live.com/live/api/userLogin/sendLoginCode
         // 用于指定Cookie的有效域名范围，控制哪些域名可以访问该Cookie
