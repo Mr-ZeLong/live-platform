@@ -60,7 +60,6 @@ public class UserLoginServiceImpl implements IUserLoginService {
         UserLoginDTO userLoginDTO = userPhoneRPC.login(phone);
         ErrorAssert.isTure(userLoginDTO.isLoginSuccess(),ApiErrorEnum.USER_LOGIN_ERROR);
 
-
         String token = accountTokenRPC.createAndSaveLoginToken(userLoginDTO.getUserId());
         Cookie cookie = new Cookie("livetk", token);
 
