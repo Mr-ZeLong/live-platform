@@ -53,6 +53,7 @@ public class UserLoginServiceImpl implements IUserLoginService {
         ErrorAssert.isTure(Pattern.matches(PHONE_REG, phone), ApiErrorEnum.PHONE_IN_VALID);
         ErrorAssert.isTure(code != null && code > 1000, ApiErrorEnum.SMS_CODE_ERROR);
         MsgCheckDTO msgCheckDTO = smsRPC.checkLoginCode(phone, code);
+
         if (!msgCheckDTO.isCheckStatus()) {
             return WebResponseVO.bizError(msgCheckDTO.getDesc());
         }
