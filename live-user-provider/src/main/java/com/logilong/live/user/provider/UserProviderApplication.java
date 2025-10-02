@@ -14,6 +14,7 @@ public class UserProviderApplication{
         SpringApplication springApplication = new SpringApplication(UserProviderApplication.class);
         springApplication.setWebApplicationType(WebApplicationType.NONE);//Dubbo不使用tomcat，使用netty
         springApplication.run(args);
+
 //        new Thread(
 //                ()->{
 //                    synchronized (UserProviderApplication.class){
